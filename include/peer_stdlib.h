@@ -15,7 +15,4 @@ void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
-int my_add(int a, int b);
-int my_subtract(int a, int b);
-
 #endif //MALLOC_PEER_STDLIB_H

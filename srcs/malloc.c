@@ -10,11 +10,3 @@ void* malloc(size_t size) {
     printf("size = %lu\n", size);
     return (NULL);
 }
-
-int my_add(int a, int b) {
-    return (a + b);
-}
-
-int my_subtract(int a, int b) {
-    return (a - b);
-}
