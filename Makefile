@@ -3,6 +3,7 @@ ifeq ($(HOSTTYPE),)
 endif
 
 NAME = libft_malloc_$(HOSTTYPE).so
+TEST_EXEC = a.out
 LIB_NAME = lft_malloc_$(HOSTTYPE)
 INCLUDE = -Iinclude
 HEADER = include/peer_stdlib.h
@@ -42,10 +43,10 @@ clean:
 	@/bin/rm -f *.o *~ *.gch *.so
 
 fclean: clean
-	/bin/rm -f $(NAME)
+	/bin/rm -f $(NAME) $(TEST_EXEC)
 
 re: fclean all
 
-test:
+test: re
 	$(CC) main.c -L. -Iinclude -$(LIB_NAME)
-	./a.out
+	./$(TEST_EXEC)
