@@ -21,7 +21,7 @@ RED = \x1b[31;01m
 WHITE = \x1b[31;37m
 RESET = \x1b[0m
 
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CFLAGS = -Wall -Werror -Wextra
 ifdef DEBUG
  CFLAGS += -g3 -fsanitize=address
 endif
@@ -32,11 +32,11 @@ export DEBUG
 all: $(NAME)
 
 $(NAME): $(OBJS) $(HEADER)
-	$(CC) $(OBJS) -shared -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -shared -o $(NAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
 %.o: %.c
-	$(CC) -c $(CFLAGS) -fPIC $(INCLUDE) $^ -o $@
+	$(CC) $(CFLAGS) -c -fPIC $(INCLUDE) $^ -o $@
 
 clean:
 	/bin/rm -f $(OBJS)
@@ -48,5 +48,5 @@ fclean: clean
 re: fclean all
 
 test: re
-	$(CC) main.c -L. -Iinclude -$(LIB_NAME)
+	$(CC) $(CFLAGS) main.c -L. -Iinclude -$(LIB_NAME)
 	./$(TEST_EXEC)

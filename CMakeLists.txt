@@ -3,6 +3,14 @@ project(malloc C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_library(malloc SHARED srcs/malloc.c srcs/free.c srcs/realloc.c include/peer_stdlib.h main.c)
+file(GLOB srcs "srcs/*.c")
+file(GLOB include "include/*.h")
+
+add_library(
+        malloc SHARED
+        ${srcs}
+        ${include}
+        main.c
+)
 
 include_directories(include)
