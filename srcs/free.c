@@ -3,7 +3,28 @@
 //
 
 #include "peer_stdlib.h"
+#include <stdio.h>
+
+static void	error_free(void *ptr) {
+	dprintf(2, "malloc *** error for object %p: pointer being freed was not allocated\n", ptr);
+	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
+	// cleanup
+}
+
 
 void    free(void* ptr) {
-    (void)ptr;
+	t_zone	*zone;
+	t_block	*block;
+
+	if (!ptr)
+		return ;
+
+	zone = find_zone(ptr);
+	if (!zone)
+		return (error_free(ptr));
+	block = find_block(ptr, zone);
+	if (!block)
+		return (error_free(ptr));
+	block->status = FREED;
+	--zone->block_count;
 }
