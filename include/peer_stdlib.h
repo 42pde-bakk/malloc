@@ -62,4 +62,7 @@ t_zone	*find_zone(void *ptr);
 // blocks.c
 t_block	*find_block(void *ptr, t_zone *zone);
 
+// defragment.c
+void	declutter_freed_areas(t_block *block);
+
 #endif //MALLOC_PEER_STDLIB_H
