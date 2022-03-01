@@ -4,7 +4,9 @@
 
 #include "peer_stdlib.h"
 #include <stdio.h>
-//#include <stdlib.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
 
 void	test_invalid_free() {
 	printf("main @ %p\n", test_invalid_free);
@@ -34,5 +36,6 @@ void	alloc_test() {
 int main() {
 	printf("t_block is size %zu, t_zone is size %zu\n", sizeof(t_block), sizeof(t_zone));
 	test_double_free();
-//	test_invalid_free();
+	test_invalid_free();
+	alloc_test();
 }
