@@ -4,9 +4,11 @@
 
 #include "peer_stdlib.h"
 #include <stdio.h>
+//#include <stdlib.h>
 
 
 int main() {
-    void* a = malloc(800);
+    printf("t_block is size %zu, t_zone is size %zu\n", sizeof(t_block), sizeof(t_zone));
+    malloc(40);
     return (0);
 }

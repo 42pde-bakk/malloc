@@ -6,6 +6,7 @@
 #define MALLOC_PEER_STDLIB_H
 
 # include <stddef.h> // size_t
+# include <stdbool.h> // bool
 
 # include <sys/mman.h> // mmap & munmap (2)
 # include <unistd.h> // getpagesize (2/3)
@@ -14,27 +15,44 @@
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
 
-typedef struct s_alloc {
-  void*     ptr;
-  size_t    size;
-  int       freed;
+typedef enum s_state {
+	EMPTY,
+	ALLOCATED,
+	FREED
+} t_state;
 
-  struct s_alloc* prev;
-  struct s_alloc* next;
-} Alloc;
+typedef struct s_block {
+  size_t    data_size;
+  int       status:2; // maybe its better to change this to available
+
+  struct s_block* prev;
+  struct s_block* next;
+} t_block;
 
 typedef struct s_zone {
-    void*       start;
-    size_t      size;
-    size_t      allocated_size;
-    size_t      allocations_amount;
+	size_t  total_size;
+	size_t  free_size;
+	size_t  block_count;
 
-    struct s_zone* prev;
-    struct s_zone* next;
-} Zone;
+	struct s_zone* prev;
+	struct s_zone* next;
+} t_zone;
+
+extern t_zone* tiny;
+
+
+# define HEAP_SHIFT(start) ((void *)start + sizeof(t_zone))
+# define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
+
+# define TINY_HEAP_ALLOCATION_SIZE 4 * getpagesize()
+# define TINY_BLOCK_SIZE (TINY_HEAP_ALLOCATION_SIZE / 128)
+# define SMALL_HEAP_ALLOCATION_SIZE (16 * getpagesize())
+# define SMALL_BLOCK_SIZE (SMALL_HEAP_ALLOCATION_SIZE / 128)
 
 void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
+
+void* find_spot(size_t size);
 
 #endif //MALLOC_PEER_STDLIB_H
