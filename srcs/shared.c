@@ -26,8 +26,9 @@ size_t  get_available_space(const t_block* block, const void* zone_end) {
 }
 
 int check_block(const t_block* block, const size_t size, t_zone* zone) {
-	if (block->status == ALLOCATED)
+	if (block->status == ALLOCATED || BLOCK_SHIFT((void *)block >= (void *)zone)) {
 		return (0);
+	}
 	return (size <= get_available_space(block, (void *)zone + zone->total_size));
 }
 
@@ -47,13 +48,11 @@ void* find_spot(size_t size) {
 	else
 		return (NULL);
 	// rn everything gon fit in tiny
-	printf("t_zone* zone @ %p\n", (void *)zone);
 	void* ptr = HEAP_SHIFT((void *)zone); // moves the zone pointer sizeof(t_zone) forwards
 	t_block* block = (t_block *)ptr;
-	printf("ptr = %p\n", ptr);
-	while ((void *)block < (void *)zone + TINY_HEAP_ALLOCATION_SIZE) {
+
+	while ((void *)block + sizeof(t_block) < (void *)zone + TINY_HEAP_ALLOCATION_SIZE) {
 		if (check_block(block, size, zone)) {
-			printf("block @ %p, block_data @ %p\n", (void*)block, (void *)BLOCK_SHIFT(block));
 			return (init_block(block, size)); // return the address of where the
 		}
 		if (!block->next) {
@@ -61,6 +60,7 @@ void* find_spot(size_t size) {
 			next->prev = block;
 			block->next = next;
 		}
+		block = block->next;
 	}
 	printf("TINY_HEAP_ALLOCATION_SIZE = %d, TINY_BLOCK_SIZE = %d\n", TINY_HEAP_ALLOCATION_SIZE, TINY_BLOCK_SIZE);
 	return (NULL);
