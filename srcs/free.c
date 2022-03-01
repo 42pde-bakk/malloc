@@ -11,7 +11,6 @@ static void	error_free(void *ptr) {
 	// cleanup
 }
 
-
 void    free(void* ptr) {
 	t_zone	*zone;
 	t_block	*block;
@@ -23,7 +22,7 @@ void    free(void* ptr) {
 	if (!zone)
 		return (error_free(ptr));
 	block = find_block(ptr, zone);
-	if (!block)
+	if (!block || block->status == FREED)
 		return (error_free(ptr));
 	block->status = FREED;
 	--zone->block_count;
