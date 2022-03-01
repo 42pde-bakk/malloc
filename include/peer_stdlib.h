@@ -16,14 +16,14 @@
 extern int errno;
 
 typedef enum s_state {
-	EMPTY,
+	AVAILABLE,
 	ALLOCATED,
 	FREED
 } t_state;
 
 typedef struct s_block {
   size_t    data_size;
-  int       status:2; // maybe its better to change this to available
+  int       status:3; // maybe its better to change this to available
 
   struct s_block* prev;
   struct s_block* next;
@@ -53,6 +53,13 @@ void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
+// shared.c
 void* find_spot(size_t size);
+
+// zones.c
+t_zone	*find_zone(void *ptr);
+
+// blocks.c
+t_block	*find_block(void *ptr, t_zone *zone);
 
 #endif //MALLOC_PEER_STDLIB_H
