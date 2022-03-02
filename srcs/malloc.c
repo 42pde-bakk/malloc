@@ -5,8 +5,10 @@
 #include "peer_stdlib.h"
 #include <stdio.h>
 
+
 void* malloc(size_t size) {
-    (void)size;
-    printf("size = %lu\n", size);
-    return (NULL);
+    void* ptr = find_spot(size);
+    // TODO: check if there is space in the zone, otherwise allocate more
+    printf("malloc: ptr = %p\n", ptr);
+    return (ptr);
 }

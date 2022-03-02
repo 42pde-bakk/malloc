@@ -3,13 +3,20 @@ ifeq ($(HOSTTYPE),)
 endif
 
 NAME = libft_malloc_$(HOSTTYPE).so
+TEST_EXEC = test
 LIB_NAME = lft_malloc_$(HOSTTYPE)
 INCLUDE = -Iinclude
 HEADER = include/peer_stdlib.h
 
-SRC_DIR = ./srcs
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(SRCS:.c=.o)
+SRC_DIR = srcs
+BUILD_DIR = obj
+SRC_EXT = c
+OBJ_EXT = o
+
+SOURCES := $(shell find $(SRC_DIR) -type f -name "*.$(SRC_EXT)")
+OBJS    := $(SOURCES:.$(SRC_EXT)=.$(OBJ_EXT))
+OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(OBJS))
+
 
 # COLORS
 PINK = \x1b[35;01m
@@ -20,7 +27,7 @@ RED = \x1b[31;01m
 WHITE = \x1b[31;37m
 RESET = \x1b[0m
 
-CFLAGS = -Wall -Werror -Wextra -pedantic
+CFLAGS = -Wall -Werror -Wextra
 ifdef DEBUG
  CFLAGS += -g3 -fsanitize=address
 endif
@@ -28,24 +35,30 @@ SHELL := /bin/bash
 export SHELL
 export DEBUG
 
-all: $(NAME)
+all: directories $(NAME)
 
-$(NAME): $(OBJS) $(HEADER)
-	$(CC) $(OBJS) -shared -o $(NAME)
+directories:
+	@mkdir -p $(BUILD_DIR)
+
+$(NAME): $(OBJECTS) $(HEADER)
+	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) -fPIC $(INCLUDE) $^ -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -fPIC $(INCLUDE) $^ -o $@
 
 clean:
-	/bin/rm -f $(OBJS)
-	@/bin/rm -f *.o *~ *.gch *.so
+	/bin/rm -f $(OBJECTS)
 
 fclean: clean
-	/bin/rm -f $(NAME)
+	/bin/rm -f $(NAME) $(TEST_EXEC)
 
 re: fclean all
 
-test:
-	$(CC) main.c -L. -Iinclude -$(LIB_NAME)
-	./a.out
+test: re
+	$(CC) $(CFLAGS) main.c -L. -Iinclude -$(LIB_NAME) -o $(TEST_EXEC)
+	./$(TEST_EXEC)
+
+dirs:
+	@mkdir $(patsubst %, $(PATH_OBJ)/%, $(DIRS)) $(patsubst %, bin/%, $(DIRS))

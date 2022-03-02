@@ -3,6 +3,23 @@ project(malloc C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_library(malloc SHARED srcs/malloc.c srcs/free.c srcs/realloc.c include/peer_stdlib.h main.c)
+
+file(GLOB srcs "srcs/*.c")
+file(GLOB libc "srcs/libc/*.c")
+file(GLOB bonus "srcs/bonus/*.c")
+file(GLOB shared "srcs/shared/*.c")
+file(GLOB include "include/*.h")
+
+add_library(
+        malloc SHARED
+        ${srcs}
+        ${libc}
+        ${shared}
+        ${bonus}
+        ${include}
+        main.c
+)
 
 include_directories(include)
+
+add_executable(test main.c libft_malloc_x86_64_Darwin.so)

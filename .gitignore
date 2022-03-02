@@ -41,6 +41,7 @@
 *.su
 *.idb
 *.pdb
+test
 
 # Kernel Module Compile Results
 *.mod*
@@ -58,3 +59,4 @@ cmake-build-debug/
 # Other IDE's
 .vs/
 .vscode/
+
