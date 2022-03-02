@@ -33,13 +33,10 @@ void	*loop_zone(t_zone* zone, size_t size) {
 	void	*zone_end = (void *)zone + TINY_HEAP_ALLOCATION_SIZE;
 
 	while (block) {
-		printf("while %p\n", (void*)block);
 		if (check_block(block, size, zone)) {
-			printf("check_block returned 1, block is %p\n", (void*)block);
 			++zone->block_count;
 			return (init_block(block, size));
 		}
-		printf("after chcek_nl\n");
 		if (block->next == NULL) {
 			void	*next_block_start = BLOCK_SHIFT((void*)block) + block->data_size;
 			if (zone_end - next_block_start > (long)(sizeof(t_block) + size)) { // can append a new block to this zone
@@ -84,7 +81,6 @@ static int	assert_zones() {
 
 void* find_spot(size_t size) {
 	assert(assert_zones() == 0);
-	printf("assertion = %d\n", assert_zones());
 
 	if (size < SMALL_BLOCK_SIZE) {
 		if (size <= TINY_BLOCK_SIZE) {
