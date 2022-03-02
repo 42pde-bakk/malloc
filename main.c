@@ -29,13 +29,14 @@ void	alloc_test() {
     	if (ptr == NULL)
     		break;
     }
-    void* ptr2 = malloc(41);
-    printf("ptr2=%p\n", ptr2);
+//    void* ptr2 = malloc(41);
+//    printf("ptr2=%p\n", ptr2);
 }
 
 int main() {
 	printf("t_block is size %zu, t_zone is size %zu\n", sizeof(t_block), sizeof(t_zone));
-	test_double_free();
+//	test_double_free();
 //	test_invalid_free();
-//	alloc_test();
+	alloc_test();
+//	show_alloc_mem();
 }
