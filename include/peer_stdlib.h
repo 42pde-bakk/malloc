@@ -72,4 +72,7 @@ t_block	*find_block(void *ptr, t_zone *zone);
 // defragment.c
 void	declutter_freed_areas(t_block *block);
 
+// show_alloc_mem.c
+void	show_alloc_mem();
+
 #endif //MALLOC_PEER_STDLIB_H
