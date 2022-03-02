@@ -5,7 +5,6 @@
 #include "peer_stdlib.h"
 
 t_block	*find_block(void *ptr, t_zone *zone) {
-
 	t_block	*block = HEAP_SHIFT((void *)zone);
 
 	for (; block != NULL; block = block->next) {

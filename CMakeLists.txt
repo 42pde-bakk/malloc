@@ -3,6 +3,7 @@ project(malloc C)
 
 set(CMAKE_C_STANDARD 11)
 
+
 file(GLOB srcs "srcs/*.c")
 file(GLOB include "include/*.h")
 
@@ -14,3 +15,5 @@ add_library(
 )
 
 include_directories(include)
+
+add_executable(test main.c libft_malloc_x86_64_Darwin.so)
