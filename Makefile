@@ -13,8 +13,9 @@ BUILD_DIR = obj
 SRC_EXT = c
 OBJ_EXT = o
 
-SOURCES     := $(shell find $(SRC_DIR) -type f -name "*.$(SRC_EXT)")
-OBJECTS     := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SOURCES:.$(SRC_EXT)=.$(OBJ_EXT)))
+SOURCES := $(shell find $(SRC_DIR) -type f -name "*.$(SRC_EXT)")
+OBJS    := $(SOURCES:.$(SRC_EXT)=.$(OBJ_EXT))
+OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(OBJS))
 
 
 # COLORS
