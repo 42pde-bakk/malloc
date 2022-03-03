@@ -4,12 +4,16 @@
 
 #include "peer_stdlib.h"
 #include <assert.h> // TODO: Remove
-#include <stdio.h>
 
-void	*allocate_new_zone(const size_t allocation_size) {
+t_zone *allocate_new_zone(const size_t allocation_size) {
 	assert(allocation_size % getpagesize() == 0);
 
-	return (mmap(NULL, allocation_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0));
+	t_zone	*new_zone = mmap(NULL, allocation_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+	if (new_zone == MAP_FAILED)
+		return (MAP_FAILED);
+	new_zone->total_size = allocation_size;
+
+	return (new_zone);
 }
 
 t_zone	*get_zonesection(const size_t allocation_size) {
@@ -29,7 +33,6 @@ t_zone	*find_zone(void *ptr) {
 	for (size_t i = 0; i < 3; ++i) {
 		for (t_zone* tmp = zone_sections[i]; tmp != NULL; tmp = tmp->next) {
 			if ((void *) tmp < ptr && ptr < (void *) tmp + TINY_HEAP_ALLOCATION_SIZE) {
-				printf("found ptr %p in zone_section %zu\n", ptr, i);
 				return (tmp);
 			}
 		}
@@ -41,6 +44,7 @@ static int	check_allocation(t_zone** zone, const size_t size) {
 	if (*zone)
 		return (0);
 	*zone = allocate_new_zone(size);
+	(*zone)->total_size = size;
 	return (*zone == MAP_FAILED);
 }
 
@@ -49,6 +53,6 @@ int	assert_zones() {
 	return (
 			(g_coll.tiny == NULL && check_allocation(&g_coll.tiny, TINY_HEAP_ALLOCATION_SIZE)) ||
 			(g_coll.small == NULL && check_allocation(&g_coll.small, SMALL_HEAP_ALLOCATION_SIZE)) ||
-			(g_coll.large == NULL && check_allocation(&g_coll.large, getpagesize()))
+			(g_coll.large == NULL && check_allocation(&g_coll.large, 4 * getpagesize()))
 	);
 }
