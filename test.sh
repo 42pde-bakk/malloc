@@ -16,6 +16,7 @@ LIBRARY=$1
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
+  echo "LIBRARY=$LIBRARY, cfile=$c_file"
   gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
 }
 
