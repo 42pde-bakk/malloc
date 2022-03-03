@@ -4,8 +4,7 @@
 
 #include <stddef.h>
 
-void	*ft_memset(void *b, int c, size_t len)
-{
+void	*ft_memset(void *b, int c, size_t len) {
 	size_t			i = 0;
 	unsigned char	*ptr = (unsigned char *)b;
 

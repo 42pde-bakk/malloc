@@ -14,4 +14,7 @@ void	ft_putstr_fd(const char* str, int fd);
 
 void	ft_putnbr_base_fd(unsigned long long nb, int base, int fd);
 
+void	*ft_memset(void *b, int c, size_t len);
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+
 #endif //MALLOC_LIBC_H
