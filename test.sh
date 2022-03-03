@@ -7,6 +7,8 @@ CYN=$'\e[1;36m'
 END=$'\e[0m'
 make -s
 set -e
+
+mkdir -p bin
 LIBRARY=libft_malloc_x86_64_Darwin.so
 #export DYLD_LIBRARY_PATH=.
 #export DYLD_INSERT_LIBRARIES="libft_malloc_x86_64_Darwin.so"
@@ -18,20 +20,13 @@ function comp {
   gcc "$c_file" $LIBRARY -o "$bin_file" -Iinclude
 }
 
-function test_outcome {
-  test_exec="$1.out"
+function run_test {
+  test_exec="bin/$1.out"
   comp "test_$1.c" "$test_exec"
-  expected_result="$2"
-  text_output=$(./"$test_exec") # execute the test
-  outcome=$?
-  echo "text_output=$text_output, outcome=$outcome"
-  if [[ $outcome == "$expected_result" ]]; then
-    echo "$MAGENTA [OK] $END. './$1' correctly returned $outcome"
-  else
-    echo "$RED [KO] $END. './$1' incorrectly returned $outcome"
-  fi
+  _=$(./"$test_exec") # execute the test
+  echo "${MAGENTA}Ran ${test_exec}${END}"
 }
 
-test_outcome double_free 0
-test_outcome free_invalid_ptr 0
-test_outcome allocation 0
+run_test double_free
+run_test free_invalid_ptr
+run_test allocation
