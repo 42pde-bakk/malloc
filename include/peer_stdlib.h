@@ -15,6 +15,8 @@
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
 
+#include <stdio.h>
+
 typedef enum s_state {
 	AVAILABLE,
 	ALLOCATED,
@@ -23,7 +25,7 @@ typedef enum s_state {
 
 typedef struct s_block {
   size_t    data_size;
-  int       status:3; // maybe its better to change this to available
+  int       status:3; // maybe its better to change this to freed
 
   struct s_block* prev;
   struct s_block* next;
@@ -60,13 +62,14 @@ void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
 // shared.c
-t_block* find_spot(size_t size);
+void *find_spot(size_t size);
 
 // zones.c
-t_zone * allocate_new_zone(const size_t allocation_size);
+t_zone * allocate_new_zone(size_t allocation_size);
 t_zone	*get_zonesection(size_t allocation_size);
-t_zone	*find_zone(void *ptr);
-int	assert_zones();
+t_zone	*check_smaller_zones(void *ptr);
+t_zone	*check_large_zone_ll(void *ptr);
+int		assert_zones();
 
 // blocks.c
 int		check_block(const t_block* block, size_t size, t_zone* zone);
