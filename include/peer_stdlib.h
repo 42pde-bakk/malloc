@@ -47,7 +47,7 @@ typedef struct s_collection {
 extern t_collection	g_coll;
 
 
-# define HEAP_SHIFT(start) ((void *)start + sizeof(t_zone))
+# define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
 # define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize())
@@ -60,13 +60,18 @@ void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
 // shared.c
-void* find_spot(size_t size);
+t_block* find_spot(size_t size);
 
 // zones.c
 void	*allocate_new_zone(size_t allocation_size);
+t_zone	*get_zonesection(size_t allocation_size);
 t_zone	*find_zone(void *ptr);
+int	assert_zones();
 
 // blocks.c
+int		check_block(const t_block* block, size_t size, t_zone* zone);
+t_block	*init_block(t_block* block, size_t size, t_zone* zone);
+void	release_block(t_block* block, t_zone* zone);
 t_block	*find_block(void *ptr, t_zone *zone);
 
 // defragment.c

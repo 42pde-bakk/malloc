@@ -43,7 +43,7 @@ static size_t	show_zones(const t_zone* zone, const char* str) {
 	size_t	total_size = 0;
 	for (const t_zone* tmp = zone; tmp; tmp = tmp->next) {
 		print_zone_header(str, (void *)zone);
-		total_size += show_blocks(HEAP_SHIFT(zone));
+		total_size += show_blocks(ZONE_SHIFT(zone));
 	}
 	return (total_size);
 }

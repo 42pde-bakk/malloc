@@ -7,8 +7,8 @@
 
 
 void* malloc(size_t size) {
-    void* ptr = find_spot(size);
-    // TODO: check if there is space in the zone, otherwise allocate more
-    printf("malloc: ptr = %p\n", ptr);
+    t_block	*block = find_spot(size);
+    void	*ptr = BLOCK_SHIFT((void *)block);
+    printf("malloc: block=%p, ptr = %p\n", (void*)block, ptr);
     return (ptr);
 }

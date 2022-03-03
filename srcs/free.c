@@ -24,7 +24,7 @@ void    free(void* ptr) {
 	block = find_block(ptr, zone);
 	if (!block || block->status == FREED)
 		return (error_free(ptr));
-	block->status = FREED;
+
+	release_block(block, zone);
 	// try to combine freed blocks if possible (or is that bonus)
-	--zone->block_count;
 }
