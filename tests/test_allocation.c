@@ -7,13 +7,13 @@
 #include <assert.h>
 
 int main() {
-	size_t	size1 = 23,
-			size2 = 34;
+	size_t	size1 = TINY_BLOCK_SIZE - 10,
+			size2 = TINY_BLOCK_SIZE;
 	void	*ptr = malloc(size1);
 	void	*ptr2 = malloc(size2);
 	size_t diff = ptr2 - ptr;
-	printf("diff = %zu\n", diff);
-	assert(ptr2 - ptr == sizeof(t_block) + size1);
+	printf("diff = %zu, check if %zu\n", diff, sizeof(t_block) + size1);
+	assert(diff == sizeof(t_block) + size1);
 
 	return (0);
 }
