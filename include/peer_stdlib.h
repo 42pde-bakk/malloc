@@ -50,9 +50,9 @@ extern t_collection	g_coll;
 # define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
-# define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize())
+# define TINY_HEAP_ALLOCATION_SIZE (size_t)(1 * getpagesize()) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
-# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(16 * getpagesize())
+# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize()) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
 
 void free(void *ptr);
@@ -63,7 +63,7 @@ void *realloc(void *ptr, size_t size);
 t_block* find_spot(size_t size);
 
 // zones.c
-void	*allocate_new_zone(size_t allocation_size);
+t_zone * allocate_new_zone(const size_t allocation_size);
 t_zone	*get_zonesection(size_t allocation_size);
 t_zone	*find_zone(void *ptr);
 int	assert_zones();
