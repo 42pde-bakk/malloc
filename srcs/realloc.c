@@ -4,14 +4,20 @@
 
 #include "peer_stdlib.h"
 #include "libc.h"
+#include <stdio.h>
 
 void *realloc(void *ptr, size_t size) {
 	if (!ptr)
 		return (malloc(size));
 
-	t_zone* zone = find_zone(ptr);
-	if (!zone)// ptr is in a different page than my allocated zones
+	t_zone* zone = check_smaller_zones(ptr);
+	if (!zone) {
+		// ptr is not in TINY or SMALL
+		zone = check_large_zone_ll(ptr);
+		if (zone)
+			return (ZONE_SHIFT(zone));
 		return (NULL);
+	}
 	t_block* block = find_block(ptr, zone);
 	if (!block) // Invalidly aligned pionter
 		return (NULL);

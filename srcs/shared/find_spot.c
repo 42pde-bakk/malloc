@@ -3,8 +3,6 @@
 //
 
 #include "peer_stdlib.h"
-#include <stdio.h>
-#include <assert.h>
 
 t_block	*zone_loop_through_blocks(t_zone* zone, size_t size) {
 	t_block	*block = (t_block *)ZONE_SHIFT((void *)zone); // shifting zone forwards and casting it to a block ptr
@@ -25,27 +23,6 @@ t_block	*zone_loop_through_blocks(t_zone* zone, size_t size) {
 	return (NULL);
 }
 
-// TODO: remove
-void	print_ll_forwards(t_zone* zone) {
-	t_zone *tmp = zone;
-	while (tmp->prev)
-		tmp = tmp->prev;
-	while (tmp) {
-		printf("%p (%zu)\t", (void*)tmp, tmp->total_size);
-		tmp = tmp->next;
-	}
-}
-
-void	print_ll_backwards(t_zone* zone) {
-	t_zone *tmp = zone;
-	while (tmp->next)
-		tmp = tmp->next;
-	while (tmp) {
-		printf("%p (%zu)\t", (void*)tmp, tmp->total_size);
-		tmp = tmp->prev;
-	}
-}
-
 t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 	void	*res;
 
@@ -61,17 +38,52 @@ t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 	return (res);
 }
 
-t_block* find_spot(size_t size) {
-	assert(assert_zones() == 0); // TODO: remove assert()
+static size_t	get_needed_size(const size_t size) {
+	size_t	page_size = (size_t)getpagesize();
+	size_t	min_size = size + sizeof(t_zone);
+	size_t	alloc_size = page_size;
+
+	while (alloc_size < min_size)
+		alloc_size += page_size;
+	return (alloc_size);
+}
+
+t_zone	*find_large_chunk(size_t size) {
+	size_t	needed_size = get_needed_size(size);
+	t_zone	*new_zone = allocate_new_zone(needed_size);
+
+	if (!new_zone)
+		return (NULL);
+	if (g_coll.large == NULL) {
+		g_coll.large = new_zone;
+		return (g_coll.large);
+	}
+	t_zone	*tmp = g_coll.large;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new_zone;
+	new_zone->prev = tmp;
+	return (new_zone);
+}
+
+void	*find_spot(size_t size) {
+	if (assert_zones())
+		return (NULL);
 
 	if (size <= SMALL_BLOCK_SIZE) {
+		t_block	*res;
 		if (size <= TINY_BLOCK_SIZE) {
-			return (loop_through_zones(g_coll.tiny, size, TINY_HEAP_ALLOCATION_SIZE));
+			res = loop_through_zones(g_coll.tiny, size, TINY_HEAP_ALLOCATION_SIZE);
 		}
 		else {
-			return (loop_through_zones(g_coll.small, size, SMALL_HEAP_ALLOCATION_SIZE));
+			res = loop_through_zones(g_coll.small, size, SMALL_HEAP_ALLOCATION_SIZE);
 		}
+		if (!res)
+			return (NULL);
+		return (BLOCK_SHIFT((void *)res));
 	}
-	dprintf(2, "LARGE not implemented yet\n");
-	return (NULL);
+	t_zone	*res = find_large_chunk(size);
+	if (!res)
+		return (NULL);
+	return (ZONE_SHIFT((void *)res));
 }

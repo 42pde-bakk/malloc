@@ -33,9 +33,13 @@ void    free(void* ptr) {
 	if (!ptr)
 		return ;
 
-	zone = find_zone(ptr);
-	if (!zone)
+	zone = check_smaller_zones(ptr);
+	if (!zone) {
+		zone = check_large_zone_ll(ptr);
+		if (zone)
+			return (release_zone(zone));
 		return (error_free(ptr));
+	}
 	block = find_block(ptr, zone);
 	if (!block || block->status == FREED)
 		return (error_free(ptr));
