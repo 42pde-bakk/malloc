@@ -5,11 +5,10 @@ GREEN=$'\e[1;32m'
 MAGENTA=$'\e[1;35m'
 CYN=$'\e[1;36m'
 END=$'\e[0m'
-make -s
 set -e
 
 mkdir -p bin
-LIBRARY=libft_malloc_x86_64_Darwin.so
+LIBRARY=$1
 #export DYLD_LIBRARY_PATH=.
 #export DYLD_INSERT_LIBRARIES="libft_malloc_x86_64_Darwin.so"
 #export DYLD_FORCE_FLAT_NAMESPACE=1
@@ -17,7 +16,7 @@ LIBRARY=libft_malloc_x86_64_Darwin.so
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
-  gcc "$c_file" $LIBRARY -o "$bin_file" -Iinclude
+  gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
 }
 
 function run_test {

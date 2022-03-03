@@ -61,8 +61,7 @@ fclean: clean
 re: fclean all
 
 test: re
-	$(CC) $(CFLAGS) main.c -L. -Iinclude -$(LIB_NAME) -o $(TEST_EXEC)
-	./$(TEST_EXEC)
+	./test.sh $(NAME)
 
 dirs:
 	@mkdir $(patsubst %, $(PATH_OBJ)/%, $(DIRS)) $(patsubst %, bin/%, $(DIRS))
