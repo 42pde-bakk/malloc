@@ -25,5 +25,6 @@ void    free(void* ptr) {
 	if (!block || block->status == FREED)
 		return (error_free(ptr));
 	block->status = FREED;
+	// try to combine freed blocks if possible (or is that bonus)
 	--zone->block_count;
 }
