@@ -29,8 +29,12 @@ RESET = \x1b[0m
 
 CFLAGS = -Wall -Werror -Wextra
 ifdef DEBUG
+ CFLAGS += -g3
+endif
+ifdef LEAKS
  CFLAGS += -g3 -fsanitize=address
 endif
+
 SHELL := /bin/bash
 export SHELL
 export DEBUG
