@@ -17,9 +17,6 @@ add_library(
         ${shared}
         ${bonus}
         ${include}
-        main.c
 )
 
 include_directories(include)
-
-add_executable(test main.c libft_malloc_x86_64_Darwin.so)
