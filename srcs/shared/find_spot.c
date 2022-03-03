@@ -25,6 +25,27 @@ t_block	*zone_loop_through_blocks(t_zone* zone, size_t size) {
 	return (NULL);
 }
 
+// TODO: remove
+void	print_ll_forwards(t_zone* zone) {
+	t_zone *tmp = zone;
+	while (tmp->prev)
+		tmp = tmp->prev;
+	while (tmp) {
+		printf("%p (%zu)\t", (void*)tmp, tmp->total_size);
+		tmp = tmp->next;
+	}
+}
+
+void	print_ll_backwards(t_zone* zone) {
+	t_zone *tmp = zone;
+	while (tmp->next)
+		tmp = tmp->next;
+	while (tmp) {
+		printf("%p (%zu)\t", (void*)tmp, tmp->total_size);
+		tmp = tmp->prev;
+	}
+}
+
 t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 	void	*res;
 
@@ -33,6 +54,7 @@ t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 			zone->next = allocate_new_zone(allocation_size);
 			if (zone->next == MAP_FAILED)
 				return (NULL);
+			zone->next->prev = zone;
 		}
 		zone = zone->next;
 	}
@@ -42,7 +64,7 @@ t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 t_block* find_spot(size_t size) {
 	assert(assert_zones() == 0); // TODO: remove assert()
 
-	if (size < SMALL_BLOCK_SIZE) {
+	if (size <= SMALL_BLOCK_SIZE) {
 		if (size <= TINY_BLOCK_SIZE) {
 			return (loop_through_zones(g_coll.tiny, size, TINY_HEAP_ALLOCATION_SIZE));
 		}
