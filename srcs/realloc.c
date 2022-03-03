@@ -19,8 +19,9 @@ void *realloc(void *ptr, size_t size) {
 		t_block	*newblock = find_spot(size);
 		if (!newblock) // It is not freed if realloc fails to obtain a large enough block of memory and returns NULL.
 			return (NULL);
+		void *new_ptr = ft_memcpy(BLOCK_SHIFT((void*)newblock), BLOCK_SHIFT((void*)block), block->data_size);
 		free(block); // if realloc() returns a pointer to a different location, the old location is freed.
-		return (ft_memcpy(BLOCK_SHIFT((void*)newblock), BLOCK_SHIFT((void*)block), block->data_size));
+		return (new_ptr);
 	} else if (size < block->data_size) {
 		return (ptr); // do I need to create a new block with less range?
 	}
