@@ -17,6 +17,7 @@ void	test_same_pointer(const size_t size) {
 }
 
 int main() {
+	printf("TINY=%zu, SMALL=%zu\n", TINY_BLOCK_SIZE, SMALL_BLOCK_SIZE);
 	test_same_pointer(0);
 	test_same_pointer(1);
 	test_same_pointer(42);
