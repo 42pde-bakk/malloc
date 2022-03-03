@@ -16,7 +16,6 @@ LIBRARY=$1
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
-  echo "LIBRARY=$LIBRARY, cfile=$c_file"
   gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
 }
 
@@ -26,8 +25,6 @@ function run_test {
   _=$(./"$test_exec") # execute the test
   echo "${MAGENTA}Ran ${test_exec}${END}"
 }
-
-ls
 
 run_test double_free
 run_test free_invalid_ptr
