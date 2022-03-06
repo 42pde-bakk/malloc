@@ -16,8 +16,11 @@ LIBRARY=$1
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
-  echo "LIBRARY=$LIBRARY, cfile=$c_file"
-  gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
+  if [ "$(uname)" == "Linux" ]; then
+    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude -Wl,-R.
+  elif [[ "$(uname)" == "Darwin" ]]; then
+    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
+  fi
 }
 
 function run_test {
@@ -27,8 +30,8 @@ function run_test {
   echo "${MAGENTA}Ran ${test_exec}${END}"
 }
 
-ls
-
 run_test double_free
 run_test free_invalid_ptr
 run_test allocation
+run_test realloc_same_size
+run_test munmap

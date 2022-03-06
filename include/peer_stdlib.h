@@ -15,6 +15,8 @@
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
 
+#include <stdio.h>
+
 typedef enum s_state {
 	AVAILABLE,
 	ALLOCATED,
@@ -23,7 +25,7 @@ typedef enum s_state {
 
 typedef struct s_block {
   size_t    data_size;
-  int       status:3; // maybe its better to change this to available
+  int       status:3; // maybe its better to change this to freed
 
   struct s_block* prev;
   struct s_block* next;
@@ -47,12 +49,12 @@ typedef struct s_collection {
 extern t_collection	g_coll;
 
 
-# define HEAP_SHIFT(start) ((void *)start + sizeof(t_zone))
+# define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
-# define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize())
+# define TINY_HEAP_ALLOCATION_SIZE (size_t)(1 * getpagesize()) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
-# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(16 * getpagesize())
+# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize()) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
 
 void free(void *ptr);
@@ -60,13 +62,19 @@ void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
 // shared.c
-void* find_spot(size_t size);
+void *find_spot(size_t size);
 
 // zones.c
-void	*allocate_new_zone(size_t allocation_size);
-t_zone	*find_zone(void *ptr);
+t_zone * allocate_new_zone(size_t allocation_size);
+t_zone	*get_zonesection(size_t allocation_size);
+t_zone	*check_smaller_zones(void *ptr);
+t_zone	*check_large_zone_ll(void *ptr);
+int		assert_zones();
 
 // blocks.c
+int		check_block(const t_block* block, size_t size, t_zone* zone);
+t_block	*init_block(t_block* block, size_t size, t_zone* zone);
+void	release_block(t_block* block, t_zone* zone);
 t_block	*find_block(void *ptr, t_zone *zone);
 
 // defragment.c
@@ -74,5 +82,8 @@ void	declutter_freed_areas(t_block *block);
 
 // show_alloc_mem.c
 void	show_alloc_mem();
+
+//cleanup.c
+void	cleanup();
 
 #endif //MALLOC_PEER_STDLIB_H
