@@ -16,7 +16,11 @@ LIBRARY=$1
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
-  gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
+  if [ "$(uname)" == "Linux" ]; then
+    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude -Wl,-R.
+  elif [[ "$(uname)" == "Darwin" ]]; then
+    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
+  fi
 }
 
 function run_test {
