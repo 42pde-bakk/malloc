@@ -23,6 +23,7 @@ t_block	*init_block(t_block* block, const size_t size, t_zone* zone) {
 	block->status = ALLOCATED;
 	block->data_size = size;
 	++zone->block_count;
+	printf("ALLOCATED NEW BLOCK, status = %d\n", block->status);
 	return (block);
 }
 

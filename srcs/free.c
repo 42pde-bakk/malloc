@@ -10,6 +10,7 @@ static void	error_free(void *ptr) {
 	dprintf(2, "malloc *** error for object %p: pointer being freed was not allocated\n", ptr);
 	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
 	// cleanup
+	show_alloc_mem();
 }
 
 void	release_zone(t_zone *zone) {

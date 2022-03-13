@@ -19,10 +19,10 @@ t_zone *allocate_new_zone(const size_t allocation_size) {
 t_zone	*check_smaller_zones(void *ptr) {
 	// Also do it for small and large
 	t_zone	*zone_sections[] = {
-			g_coll.tiny, g_coll.small
+		g_coll.tiny, g_coll.small
 	};
 	size_t	zone_sizes[] = {
-			TINY_HEAP_ALLOCATION_SIZE, SMALL_HEAP_ALLOCATION_SIZE
+		TINY_HEAP_ALLOCATION_SIZE, SMALL_HEAP_ALLOCATION_SIZE
 	};
 
 	for (size_t i = 0; i < 2; ++i) {

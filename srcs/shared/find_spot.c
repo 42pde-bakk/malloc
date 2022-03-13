@@ -40,7 +40,7 @@ t_block	*loop_through_zones(t_zone* zone, size_t size, size_t allocation_size) {
 
 static size_t	get_needed_size(const size_t size) {
 	size_t	page_size = (size_t)getpagesize();
-	size_t	min_size = size + sizeof(t_zone);
+	size_t	min_size = size + sizeof(t_zone) + sizeof(t_block);
 	size_t	alloc_size = page_size;
 
 	while (alloc_size < min_size)
@@ -48,42 +48,45 @@ static size_t	get_needed_size(const size_t size) {
 	return (alloc_size);
 }
 
-t_zone	*find_large_chunk(size_t size) {
-	size_t	needed_size = get_needed_size(size);
-	t_zone	*new_zone = allocate_new_zone(needed_size);
+t_block	*find_available_large_chunk(const size_t size) {
+	t_zone	*tmp;
+	t_block	*block;
+
+	for (tmp = g_coll.large; tmp; tmp = tmp->next) {
+		block = BLOCK_SHIFT((void *)tmp);
+		if (block->status != ALLOCATED && size < block->data_size)
+			return (block);
+	}
+	return (NULL);
+}
+
+t_block	*find_large_chunk(const size_t size) {
+	size_t	needed_alloc_size;
+	t_block	*res = find_available_large_chunk(size);
+	if (res)
+		return (res);
+	needed_alloc_size = get_needed_size(size);
+	t_zone	*new_zone = allocate_new_zone(needed_alloc_size);
 
 	if (!new_zone)
 		return (NULL);
-	if (g_coll.large == NULL) {
-		g_coll.large = new_zone;
-		return (g_coll.large);
-	}
-	t_zone	*tmp = g_coll.large;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_zone;
-	new_zone->prev = tmp;
-	return (new_zone);
+	g_coll.large->prev = new_zone;
+	new_zone->next = g_coll.large;
+	g_coll.large = new_zone;
+	return (ZONE_SHIFT(g_coll.large));
 }
 
 void	*find_spot(size_t size) {
+	t_block	*res;
 	if (assert_zones())
 		return (NULL);
 
-	if (size <= SMALL_BLOCK_SIZE) {
-		t_block	*res;
-		if (size <= TINY_BLOCK_SIZE) {
-			res = loop_through_zones(g_coll.tiny, size, TINY_HEAP_ALLOCATION_SIZE);
-		}
-		else {
-			res = loop_through_zones(g_coll.small, size, SMALL_HEAP_ALLOCATION_SIZE);
-		}
-		if (!res)
-			return (NULL);
-		return (BLOCK_SHIFT((void *)res));
+	if (size <= TINY_BLOCK_SIZE)
+		res = loop_through_zones(g_coll.tiny, size, TINY_HEAP_ALLOCATION_SIZE);
+	else if (size <= SMALL_BLOCK_SIZE)
+		res = loop_through_zones(g_coll.small, size, SMALL_HEAP_ALLOCATION_SIZE);
+	else {
+		res = find_large_chunk(size);
 	}
-	t_zone	*res = find_large_chunk(size);
-	if (!res)
-		return (NULL);
-	return (ZONE_SHIFT((void *)res));
+	return (BLOCK_SHIFT((void *)res));
 }

@@ -18,9 +18,9 @@ extern int errno;
 #include <stdio.h>
 
 typedef enum s_state {
-	AVAILABLE,
-	ALLOCATED,
-	FREED
+	AVAILABLE = 0,
+	ALLOCATED = 1,
+	FREED = 2
 } t_state;
 
 typedef struct s_block {
@@ -52,10 +52,17 @@ extern t_collection	g_coll;
 # define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
-# define TINY_HEAP_ALLOCATION_SIZE (size_t)(1 * getpagesize()) // 4
+# define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize()) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
-# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize()) // 16
+# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(16 * getpagesize()) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
+
+typedef enum s_category {
+	ZERO,
+	TINY,
+	SMALL,
+	LARGE
+}	t_category;
 
 void free(void *ptr);
 void *malloc(size_t size);
