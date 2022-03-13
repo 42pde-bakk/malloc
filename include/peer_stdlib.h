@@ -11,6 +11,7 @@
 # include <sys/mman.h> // mmap & munmap (2)
 # include <unistd.h> // getpagesize (2/3)
 # include <sys/resource.h> // getrlimit (2)
+# include <pthread.h> // mutex
 
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
@@ -47,6 +48,7 @@ typedef struct s_collection {
 }	t_collection;
 
 extern t_collection	g_coll;
+extern pthread_mutex_t g_mutex;
 
 
 # define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))

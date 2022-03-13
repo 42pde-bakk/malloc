@@ -9,7 +9,7 @@
 static void	error_free(void *ptr) {
 	dprintf(2, "malloc *** error for object %p: pointer being freed was not allocated\n", ptr);
 	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
-	// cleanup
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void	release_zone(t_zone *zone) {
@@ -24,6 +24,7 @@ void	release_zone(t_zone *zone) {
 		printf("tried to call munmap(%p, %zu)\n", (void*)zone, zone->total_size);
 		assert(0);
 	}
+	pthread_mutex_unlock(&g_mutex);
 }
 
 void    free(void* ptr) {
@@ -33,6 +34,7 @@ void    free(void* ptr) {
 	if (!ptr)
 		return ;
 
+	pthread_mutex_lock(&g_mutex);
 	zone = check_smaller_zones(ptr);
 	if (!zone) {
 		zone = check_large_zone_ll(ptr);
@@ -50,8 +52,8 @@ void    free(void* ptr) {
 		// munmap the zone if it contains no blocks
 		// but only if it isn't the only zone of it's size
 		// Will this also work for my large ones?
-		release_zone(zone);
+		return (release_zone(zone));
 	}
 	// try to combine freed blocks if possible (or is that bonus)
-
+	pthread_mutex_unlock(&g_mutex);
 }

@@ -6,4 +6,4 @@
 
 t_collection g_coll;
 
-// TODO: Add a mutex
+pthread_mutex_t	g_mutex = PTHREAD_MUTEX_INITIALIZER;
