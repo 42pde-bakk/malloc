@@ -5,8 +5,8 @@
 #include "peer_stdlib.h"
 #include <stdio.h>
 
-static void	unmap_all_zones(t_zone* zone) {
-	t_zone	*tmp;
+static void	unmap_all_zones(t_heap* zone) {
+	t_heap	*tmp;
 	while (zone) {
 		tmp = zone;
 		zone = zone->next;

@@ -11,7 +11,7 @@ void *realloc(void *ptr, size_t size) {
 		return (malloc(size));
 
 	pthread_mutex_lock(&g_mutex);
-	t_zone* zone = check_smaller_zones(ptr);
+	t_heap* zone = check_smaller_zones(ptr);
 	if (!zone) {
 		// ptr is not in TINY or SMALL
 		zone = check_large_zone_ll(ptr);

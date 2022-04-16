@@ -38,9 +38,9 @@ static void	print_zone_header(const char* str, void *zone_addr) {
 	ft_putstr_fd("\n", fd);
 }
 
-static size_t	show_zones(const t_zone* zone, const char* str) {
+static size_t	show_zones(const t_heap* zone, const char* str) {
 	size_t	total_size = 0;
-	for (const t_zone* tmp = zone; tmp; tmp = tmp->next) {
+	for (const t_heap* tmp = zone; tmp; tmp = tmp->next) {
 		print_zone_header(str, (void *)zone);
 		total_size += show_blocks(ZONE_SHIFT(zone));
 	}

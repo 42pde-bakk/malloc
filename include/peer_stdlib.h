@@ -18,40 +18,32 @@ extern int errno;
 
 #include <stdio.h>
 
-typedef enum s_state {
-	AVAILABLE,
-	ALLOCATED,
-	FREED
-} t_state;
-
 typedef struct s_block {
   size_t    data_size;
-  int       status:3; // maybe its better to change this to freed
+  int		free;
 
-  struct s_block* prev;
   struct s_block* next;
 } t_block;
 
-typedef struct s_zone {
+typedef struct s_heap {
 	size_t  total_size;
-	size_t  free_size;
 	size_t  block_count;
 
-	struct s_zone* prev;
-	struct s_zone* next;
-} t_zone;
+	struct s_heap* prev;
+	struct s_heap* next;
+} t_heap;
 
-typedef struct s_collection {
-	t_zone	*tiny,
-			*small,
-			*large;
-}	t_collection;
+typedef struct s_malloc_zones {
+	t_heap	*tiny,
+			*small;
+	t_block	*large;
+} t_malloc_zones;
 
-extern t_collection	g_coll;
+extern t_malloc_zones g_malloc_zones;
 extern pthread_mutex_t g_mutex;
 
 
-# define ZONE_SHIFT(start) ((void *)start + sizeof(t_zone))
+# define ZONE_SHIFT(start) ((void *)start + sizeof(t_heap))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
 # define TINY_HEAP_ALLOCATION_SIZE (size_t)(1 * getpagesize()) // 4
@@ -64,20 +56,15 @@ void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
 // shared.c
-void *find_spot(size_t size);
 
 // zones.c
-t_zone * allocate_new_zone(size_t allocation_size);
-t_zone	*get_zonesection(size_t allocation_size);
-t_zone	*check_smaller_zones(void *ptr);
-t_zone	*check_large_zone_ll(void *ptr);
-int		assert_zones();
+t_heap *allocateHeap(size_t alloc_size);
+void	heap_push_back(t_heap** heap, t_heap* new_heap);
+void	extend_heap(t_heap* heap, size_t alloc_size);
 
-// blocks.c
-int		check_block(const t_block* block, size_t size, t_zone* zone);
-t_block	*init_block(t_block* block, size_t size, t_zone* zone);
-void	release_block(t_block* block, t_zone* zone);
-t_block	*find_block(void *ptr, t_zone *zone);
+// t_block.c
+t_block *block_init(t_block *b, size_t size);
+void	block_push_back(t_block ** blocks, t_block* new_block);
 
 // defragment.c
 void	declutter_freed_areas(t_block *block);

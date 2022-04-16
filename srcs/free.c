@@ -12,7 +12,7 @@ static void	error_free(void *ptr) {
 	pthread_mutex_unlock(&g_mutex);
 }
 
-void	release_zone(t_zone *zone) {
+void	release_zone(t_heap *zone) {
 	if (zone->prev)
 		zone->prev->next = zone->next;
 	if (zone->next)
@@ -28,7 +28,7 @@ void	release_zone(t_zone *zone) {
 }
 
 void    free(void* ptr) {
-	t_zone	*zone;
+	t_heap	*zone;
 	t_block	*block;
 
 	if (!ptr)

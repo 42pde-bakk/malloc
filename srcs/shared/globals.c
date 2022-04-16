@@ -4,6 +4,9 @@
 
 #include "peer_stdlib.h"
 
-t_collection g_coll;
-
+t_malloc_zones g_malloc_zones = {
+		.tiny = NULL,
+		.small = NULL,
+		.large = NULL
+};
 pthread_mutex_t	g_mutex = PTHREAD_MUTEX_INITIALIZER;
