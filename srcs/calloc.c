@@ -7,8 +7,6 @@
 
 void	*calloc(size_t nmemb, size_t size) {
 	void	*ptr;
-	if (nmemb == 0 || size == 0)
-		nmemb = size = 1;
 
 	ptr = malloc(nmemb * size);
 	if (ptr)

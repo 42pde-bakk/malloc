@@ -57,9 +57,9 @@ static void	print_total_bytes(const size_t total) {
 void	show_alloc_mem() {
 	size_t	total = 0;
 
-	total += show_zones(g_coll.tiny, "TINY");
-	total += show_zones(g_coll.small, "SMALL");
-	total += show_zones(g_coll.large, "LARGE");
+	total += show_zones(g_malloc_zones.tiny, "TINY");
+	total += show_zones(g_malloc_zones.small, "SMALL");
+//	total += show_zones(g_malloc_zones.large, "LARGE");
 
 	print_total_bytes(total);
 }

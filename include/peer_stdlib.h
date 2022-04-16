@@ -55,6 +55,10 @@ void free(void *ptr);
 void *malloc(size_t size);
 void *realloc(void *ptr, size_t size);
 
+
+// find_ptr.c
+t_block*	loop_blocks(t_block* block, void* ptr, bool remove);
+t_block*	loop_heap(t_heap* heap, void* ptr);
 // shared.c
 
 // zones.c

@@ -24,36 +24,32 @@ void	release_zone(t_heap *zone) {
 		printf("tried to call munmap(%p, %zu)\n", (void*)zone, zone->total_size);
 		assert(0);
 	}
-	pthread_mutex_unlock(&g_mutex);
+}
+
+
+// not locking the mutex here
+void	free_internal(void* ptr) {
+	t_block	*result = NULL;
+	if ((result = loop_heap(g_malloc_zones.tiny, ptr))) {
+		result->free = 1;
+		return ;
+	}
+	if ((result = loop_heap(g_malloc_zones.small, ptr))) {
+		result->free = 1;
+		return ;
+	}
+	if ((result = loop_blocks(g_malloc_zones.large, ptr, true))) {
+		munmap(result, result->data_size);
+		return ;
+	}
+	error_free(ptr);
 }
 
 void    free(void* ptr) {
-	t_heap	*zone;
-	t_block	*block;
-
 	if (!ptr)
 		return ;
 
 	pthread_mutex_lock(&g_mutex);
-	zone = check_smaller_zones(ptr);
-	if (!zone) {
-		zone = check_large_zone_ll(ptr);
-		if (zone)
-			return (release_zone(zone));
-		return (error_free(ptr));
-	}
-	block = find_block(ptr, zone);
-	if (!block || block->status == FREED)
-		return (error_free(ptr));
-
-	release_block(block, zone);
-
-	if (zone->block_count == 0 && (zone->prev || zone->next)) {
-		// munmap the zone if it contains no blocks
-		// but only if it isn't the only zone of it's size
-		// Will this also work for my large ones?
-		return (release_zone(zone));
-	}
-	// try to combine freed blocks if possible (or is that bonus)
+	free_internal(ptr);
 	pthread_mutex_unlock(&g_mutex);
 }

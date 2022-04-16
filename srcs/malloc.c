@@ -29,11 +29,7 @@ static void	malloc_init(const size_t size) {
 	}
 }
 
-void*	find_spot_in_heaplist(t_heap* heap, size_t size) {
-	void*	result = NULL;
-
-//	if ((result = find_in_heap(size)))
-//		return (result);
+void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 	while (heap) {
 		t_block* block = ZONE_SHIFT(heap);
 		while (block) {
@@ -55,12 +51,12 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size) {
 		}
 		if (!heap->next) {
 			// extend zone
-			extend_heap(heap, )
+			extend_heap(heap, heap_alloc_size);
 		}
 		heap = heap->next;
 	}
+	return (NULL);
 }
-
 
 
 void	*large_malloc(const size_t size) {
@@ -86,9 +82,9 @@ void	*malloc_internal(size_t size) {
 	malloc_init(size);
 
 	if (size <= TINY_BLOCK_SIZE) {
-		result = tiny_malloc(size);
+		result = find_spot_in_heaplist(g_malloc_zones.tiny, size, TINY_HEAP_ALLOCATION_SIZE);
 	} else if (size <= SMALL_BLOCK_SIZE) {
-		result = small_malloc(size);
+		result = find_spot_in_heaplist(g_malloc_zones.small, size, SMALL_HEAP_ALLOCATION_SIZE);
 	} else {
 		result = large_malloc(size);
 	}
