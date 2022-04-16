@@ -15,6 +15,8 @@ t_heap *allocateHeap(const size_t alloc_size) {
 	newHeap->block_count = 0;
 	newHeap->prev = NULL;
 	newHeap->next = NULL;
+
+	block_init(ZONE_SHIFT(newHeap), alloc_size - sizeof(t_heap) - sizeof(t_block));
 	return (newHeap);
 }
 

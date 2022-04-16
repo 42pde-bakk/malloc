@@ -26,12 +26,14 @@ function comp {
 function run_test {
   test_exec="bin/$1.out"
   comp "test_$1.c" "$test_exec"
-  _=$(./"$test_exec") # execute the test
+  echo "compiled $test_exec"
+  ./"$test_exec"
+#  _=$(./"$test_exec") # execute the test
   echo "${MAGENTA}Ran ${test_exec}${END}"
 }
 
-run_test double_free
-run_test free_invalid_ptr
+#run_test double_free
+#run_test free_invalid_ptr
 run_test allocation
-run_test realloc_same_size
-run_test munmap
+#run_test realloc_same_size
+#run_test munmap

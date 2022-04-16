@@ -22,6 +22,7 @@ typedef struct s_block {
   size_t    data_size;
   int		free;
 
+  struct s_block* prev;
   struct s_block* next;
 } t_block;
 

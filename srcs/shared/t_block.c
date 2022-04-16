@@ -6,7 +6,7 @@
 
 t_block *block_init(t_block *b, const size_t size) {
 	b->data_size = size;
-	b->free = 0;
+	b->free = 1;
 	b->next = NULL;
 
 	return (b);

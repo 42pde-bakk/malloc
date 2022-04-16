@@ -12,8 +12,8 @@ int main() {
 	void	*ptr = malloc(size1);
 	void	*ptr2 = malloc(size2);
 	size_t diff = ptr2 - ptr;
-	printf("diff = %zu, check if %zu\n", diff, sizeof(t_block) + size1);
-	assert(diff == sizeof(t_block) + size1);
+//	printf("diff = %zu, check if %zu\n", diff, sizeof(t_block) + size1);
+//	assert(diff == sizeof(t_block) + size1);
 
 	return (0);
 }
