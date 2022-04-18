@@ -28,7 +28,6 @@ function run_test {
   comp "test_$1.c" "$test_exec"
   echo "compiled $test_exec"
   ./"$test_exec"
-#  _=$(./"$test_exec") # execute the test
   echo "${MAGENTA}Ran ${test_exec}${END}"
 }
 
@@ -37,3 +36,4 @@ run_test double_free
 run_test free_invalid_ptr
 run_test realloc_same_size
 run_test munmap
+run_test mix

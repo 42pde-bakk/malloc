@@ -30,18 +30,9 @@ void*	free_block(t_heap* heap, t_block* block) {
 	if (block->free)
 		return (NULL);
 	block->free = 1;
+	assert(heap->block_count > 0);
 	heap->block_count--;
 	dprintf(2, "heap->block_count = %zu\n", heap->block_count);
-//	if (heap->block_count == 0) {
-//		dprintf(2, "heap->block_count = 0, let's munmap this pos\n");
-//		if (heap->prev)
-//			heap->prev->next = heap->next;
-//		if (heap->next)
-//			heap->next->prev = heap->prev;
-//		int ret = munmap((void *)heap, heap->total_size);
-//		if (ret)
-//			perror("munmap in free_block");
-//	}
 	return (heap);
 }
 
@@ -63,8 +54,8 @@ void	free_internal(void* ptr) {
 	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
-			if (g_malloc_zones.tiny == heap)
-				g_malloc_zones.tiny = heap->next;
+			if (g_malloc_zones.small == heap)
+				g_malloc_zones.small = heap->next;
 			remove_heap_from_list(heap);
 			release_heap(heap);
 		}

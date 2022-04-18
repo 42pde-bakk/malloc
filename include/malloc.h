@@ -6,8 +6,11 @@
 #define MALLOC_MALLOC_H
 #include <stddef.h>
 
-void free(void *ptr);
-void *malloc(size_t size);
-void *realloc(void *ptr, size_t size);
+void	free(void *ptr);
+void	*calloc(size_t nmemb, size_t size);
+void	*malloc(size_t size);
+void	*realloc(void *ptr, size_t size);
+void	*reallocf(void *ptr, size_t size);
+
 
 #endif //MALLOC_MALLOC_H

@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include "malloc_internal.h"
 
-void	*reallocf(void *ptr, size_t size) {
+void *reallocf(void *ptr, size_t size) {
 	void *res;
 
 	pthread_mutex_lock(&g_mutex);

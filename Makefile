@@ -45,6 +45,7 @@ directories:
 
 $(NAME): $(OBJECTS) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
+	ln -sf $(HOSTTYPE) libft_malloc.so
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c

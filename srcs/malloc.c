@@ -29,6 +29,7 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 					block->data_size = size;
 
 				heap->block_count++;
+				printf("1.incrementing heap->block_count to %zu for %p\n", heap->block_count, BLOCK_SHIFT(block));
 				return (BLOCK_SHIFT(block));
 			}
 			if (!block->next)
@@ -44,10 +45,13 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 			block->next = new_block;
 			new_block->prev = block;
 			new_block->free = 0;
+			heap->block_count++;
+			printf("2.incrementing heap->block_count to %zu for %p\n", heap->block_count, BLOCK_SHIFT(new_block));
 			return (BLOCK_SHIFT(new_block));
 		}
 		if (!heap->next) {
 			// extend zone
+			printf("extending heap\n");
 			extend_heap(heap, heap_alloc_size);
 		}
 		heap = heap->next;
