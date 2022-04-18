@@ -19,7 +19,7 @@ extern int errno;
 #include <stdio.h>
 
 typedef struct s_block {
-	size_t    data_size;
+	size_t	data_size;
 	int		dummy;
 	int		free;
 
@@ -41,25 +41,25 @@ typedef struct s_malloc_zones {
 	t_block	*large;
 } t_malloc_zones;
 
-extern t_malloc_zones g_malloc_zones;
-extern pthread_mutex_t g_mutex;
+extern t_malloc_zones	g_malloc_zones;
+extern pthread_mutex_t	g_mutex;
 
 #define PAGE_SIZE getpagesize()
 
 # define ZONE_SHIFT(start) ((void *)start + sizeof(t_heap))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
-# define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * PAGE_SIZE) // 4
+# define TINY_HEAP_ALLOCATION_SIZE (size_t)(8 * PAGE_SIZE) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
 # define SMALL_HEAP_ALLOCATION_SIZE (size_t)(64 * PAGE_SIZE) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
 
-void free_internal(void *ptr);
-void *malloc_internal(size_t size);
-void *realloc_internal(void *ptr, size_t size);
+void	free_internal(void *ptr);
+void	*malloc_internal(size_t size);
+void	*realloc_internal(void *ptr, size_t size);
 
 
-void*	free_block(t_heap* heap, t_block* block);
+void	*free_block(t_heap* heap, t_block* block);
 
 // find_ptr.c
 typedef void*(*loop_func)(t_heap*,t_block*);

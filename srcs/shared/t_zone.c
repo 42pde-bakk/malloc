@@ -7,7 +7,7 @@
 
 t_heap *allocateHeap(size_t alloc_size) {
 	size_t real = PAGE_SIZE;
-	while (alloc_size < real)
+	while (alloc_size > real)
 		real += PAGE_SIZE;
 
 	assert(real % PAGE_SIZE == 0);
