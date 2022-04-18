@@ -6,7 +6,9 @@
 
 t_block*	loop_blocks(t_block* block, void* ptr, bool remove) {
 	while (block) {
+		dprintf(2, "block=%p, BLOCK_SHIFT=%p, ptr=%p\n", (void*)block, BLOCK_SHIFT(block), ptr);
 		if (BLOCK_SHIFT(block) == ptr) {
+			dprintf(2, "found it\n");
 			if (remove)
 				remove_block_from_list(block);
 			return (block);

@@ -62,7 +62,6 @@ void *realloc_internal(void *ptr, size_t size);
 void*	free_block(t_heap* heap, t_block* block);
 
 // find_ptr.c
-void	remove_block_from_list(t_block *block);
 typedef void*(*loop_func)(t_heap*,t_block*);
 t_block	*loop_blocks(t_block* block, void* ptr, bool remove);
 void	*loop_heap(t_heap* heap, void* ptr, loop_func func);
@@ -72,10 +71,13 @@ void	*loop_heap(t_heap* heap, void* ptr, loop_func func);
 t_heap *allocateHeap(size_t alloc_size);
 void	heap_push_back(t_heap** heap, t_heap* new_heap);
 void	extend_heap(t_heap* heap, size_t alloc_size);
+void	remove_heap_from_list(t_heap *heap);
+void	release_heap(t_heap *heap);
 
 // t_block.c
 t_block *block_init(t_block *b, size_t size);
 void	block_push_back(t_block ** blocks, t_block* new_block);
+void 	remove_block_from_list(t_block *block);
 
 // defragment.c
 void	declutter_freed_areas(t_block *block);

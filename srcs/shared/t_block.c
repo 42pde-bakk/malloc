@@ -28,3 +28,10 @@ void	block_push_back(t_block **blocks, t_block* new_block) {
 	}
 	tmp->next = new_block;
 }
+
+void remove_block_from_list(t_block *block) {
+	if (block->prev)
+		block->prev->next = block->next;
+	if (block->next)
+		block->next->prev = block->prev;
+}

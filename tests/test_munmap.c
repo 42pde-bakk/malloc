@@ -13,9 +13,9 @@ void	test_munmap_zone() {
 	void	*ptrs_small[max_nb];
 
 	for (int i = 0; i < max_nb; ++i) {
-		ptrs_tiny[i] = malloc(TINY_BLOCK_SIZE);
+		ptrs_tiny[i] = malloc(25);
 		printf("ptrs_tiny[%d] = %p\n", i, ptrs_tiny[i]);
-		ptrs_small[i] = malloc(SMALL_BLOCK_SIZE);
+		ptrs_small[i] = malloc(80);
 	}
 	assert(g_malloc_zones.tiny->next != NULL);
 	show_alloc_mem();
@@ -30,5 +30,5 @@ void	test_munmap_zone() {
 
 int main() {
 	test_munmap_zone();
-	printf("TINY_BLOCK_SIZE = %zu, SMALL_BLOCK_SIZE = %zu\n", TINY_BLOCK_SIZE, SMALL_BLOCK_SIZE);
+	printf("TINY_BLOCK_SIZE = %d, SMALL_BLOCK_SIZE = %d\n", 25, 80);
 }

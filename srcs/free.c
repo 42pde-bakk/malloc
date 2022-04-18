@@ -25,41 +25,58 @@ void	release_zone(t_heap *zone) {
 	}
 }
 
-void remove_block_from_list(t_block *block) {
-	if (block->prev)
-		block->prev->next = block->next;
-	if (block->next)
-		block->next->prev = block->prev;
-}
-
 void*	free_block(t_heap* heap, t_block* block) {
+	dprintf(2, "in free_block: block->free = %d\n", block->free);
+	if (block->free)
+		return (NULL);
 	block->free = 1;
 	heap->block_count--;
-	if (heap->block_count == 0) {
-		if (heap->prev)
-			heap->prev->next = heap->next;
-		if (heap->next)
-			heap->next->prev = heap->prev;
-		int ret = munmap((void *)heap, heap->total_size);
-		if (ret)
-			perror("munmap in free_block");
-	}
-	return (NULL);
+	dprintf(2, "heap->block_count = %zu\n", heap->block_count);
+//	if (heap->block_count == 0) {
+//		dprintf(2, "heap->block_count = 0, let's munmap this pos\n");
+//		if (heap->prev)
+//			heap->prev->next = heap->next;
+//		if (heap->next)
+//			heap->next->prev = heap->prev;
+//		int ret = munmap((void *)heap, heap->total_size);
+//		if (ret)
+//			perror("munmap in free_block");
+//	}
+	return (heap);
 }
 
 // not locking the mutex here
 void	free_internal(void* ptr) {
-	t_block	*result = NULL;
-	if (loop_heap(g_malloc_zones.tiny, ptr, free_block)) {
-//		result->free = 1;
+	void	*result = NULL;
+	dprintf(2, "lets loop for tiny\n");
+	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
+		t_heap	*heap = (t_heap *)result;
+		if (heap->block_count == 0 && (heap->prev || heap->next)) {
+			if (g_malloc_zones.tiny == heap)
+				g_malloc_zones.tiny = heap->next;
+			remove_heap_from_list(heap);
+			release_heap(heap);
+		}
 		return ;
 	}
-	if (loop_heap(g_malloc_zones.small, ptr, free_block)) {
-//		result->free = 1;
+	dprintf(2, "lets loop for small\n");
+	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
+		t_heap	*heap = (t_heap *)result;
+		if (heap->block_count == 0 && (heap->prev || heap->next)) {
+			if (g_malloc_zones.tiny == heap)
+				g_malloc_zones.tiny = heap->next;
+			remove_heap_from_list(heap);
+			release_heap(heap);
+		}
 		return ;
 	}
 	if ((result = loop_blocks(g_malloc_zones.large, ptr, true))) {
-		munmap(result, result->data_size);
+		t_block	*block = (t_block *)result;
+		if (g_malloc_zones.large == block)
+			g_malloc_zones.large = block->next;
+		remove_block_from_list(block);
+		if (munmap(block, block->data_size))
+			perror("munmap large");
 		return ;
 	}
 	error_free(ptr);

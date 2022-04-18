@@ -80,7 +80,6 @@ void	*malloc_internal(size_t size) {
 	size = align_16bytes(size);
 	malloc_init(size);
 
-	dprintf(2, "before looping\n");
 	if (size <= TINY_BLOCK_SIZE) {
 		result = find_spot_in_heaplist(g_malloc_zones.tiny, size, TINY_HEAP_ALLOCATION_SIZE);
 	} else if (size <= SMALL_BLOCK_SIZE) {
@@ -88,7 +87,6 @@ void	*malloc_internal(size_t size) {
 	} else {
 		result = large_malloc(size);
 	}
-	dprintf(2, "after looping, result = %p\n", result);
 	return (result);
 }
 
