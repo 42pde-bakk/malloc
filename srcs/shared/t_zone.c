@@ -11,10 +11,12 @@ t_heap *allocateHeap(size_t alloc_size) {
 		real += PAGE_SIZE;
 
 	assert(real % PAGE_SIZE == 0);
+	dprintf(2, "in allocateHeap\n");
 
 	t_heap	*newHeap = mmap(NULL, real, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (newHeap == MAP_FAILED)
 		return (MAP_FAILED);
+	dprintf(2, "allocated a new heap\n");
 	newHeap->total_size = real;
 	newHeap->block_count = 0;
 	newHeap->prev = NULL;

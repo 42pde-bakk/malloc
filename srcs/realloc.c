@@ -74,11 +74,12 @@ void	*realloc_large(void *ptr, size_t size) {
 }
 
 void	*realloc_internal(void *ptr, size_t size) {
-	size = align_16bytes(size);
+	t_block	*result = NULL;
+
 	if (!ptr)
 		return (malloc_internal(size));
 
-	t_block	*result = NULL;
+	size = align_16bytes(size);
 	if ((result = realloc_loop_heap(g_malloc_zones.tiny, ptr, size))) {
 		return (result);
 	}
