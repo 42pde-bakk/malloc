@@ -20,6 +20,7 @@ extern int errno;
 
 typedef struct s_block {
   size_t    data_size;
+  int		dummy;
   int		free;
 
   struct s_block* prev;
@@ -58,8 +59,10 @@ void *realloc(void *ptr, size_t size);
 
 
 // find_ptr.c
+typedef void*(*loop_func)(t_heap*,t_block*);
+void*		free_block(t_heap* heap, t_block* block);
 t_block*	loop_blocks(t_block* block, void* ptr, bool remove);
-t_block*	loop_heap(t_heap* heap, void* ptr);
+int			loop_heap(t_heap* heap, void* ptr, loop_func func);
 // shared.c
 
 // zones.c
@@ -79,5 +82,13 @@ void	show_alloc_mem();
 
 //cleanup.c
 void	cleanup();
+
+// utilities.c
+void	check(void* ptr);
+size_t	align_16bytes(size_t size);
+bool	isTiny(size_t size);
+bool	isSmall(size_t size);
+bool	isLarge(size_t size);
+
 
 #endif //MALLOC_PEER_STDLIB_H
