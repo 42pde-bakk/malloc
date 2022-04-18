@@ -39,7 +39,6 @@ void*	free_block(t_heap* heap, t_block* block) {
 // not locking the mutex here
 void	free_internal(void* ptr) {
 	void	*result = NULL;
-//	dprintf(2, "lets loop for tiny\n");
 	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
@@ -50,7 +49,6 @@ void	free_internal(void* ptr) {
 		}
 		return ;
 	}
-//	dprintf(2, "lets loop for small\n");
 	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
@@ -61,11 +59,17 @@ void	free_internal(void* ptr) {
 		}
 		return ;
 	}
-	if ((result = loop_blocks(g_malloc_zones.large, ptr, true))) {
+	if ((result = loop_blocks(g_malloc_zones.large, ptr))) {
 		t_block	*block = (t_block *)result;
+		assert(block != block->next);
 		if (g_malloc_zones.large == block)
 			g_malloc_zones.large = block->next;
 		remove_block_from_list(block);
+		if (block->prev)
+			assert(block->prev != block->prev->next);
+		if (block->next)
+			assert(block->next != block->next->prev);
+		assert(g_malloc_zones.large != block);
 		if (munmap(block, block->data_size))
 			perror("munmap large");
 		return ;
@@ -78,7 +82,9 @@ void    free(void* ptr) {
 	if (!ptr)
 		return ;
 
-	pthread_mutex_lock(&g_mutex);
+//	pthread_mutex_lock(&g_mutex);
+	dprintf(2, "calling free(%p)\n", ptr);
 	free_internal(ptr);
-	pthread_mutex_unlock(&g_mutex);
+	dprintf(2, "freed %p\n", ptr);
+//	pthread_mutex_unlock(&g_mutex);
 }

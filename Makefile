@@ -44,7 +44,7 @@ directories:
 	@mkdir -p $(BUILD_DIR)
 
 $(NAME): $(OBJECTS) $(HEADER)
-	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
+	$(CC) $(OBJECTS) -shared -o $(NAME)
 	ln -sf $(NAME) $(LIBNAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 

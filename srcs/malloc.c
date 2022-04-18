@@ -4,6 +4,7 @@
 
 #include "malloc_internal.h"
 #include <stdio.h>
+#include <assert.h>
 
 
 static void	malloc_init(const size_t size) {
@@ -40,10 +41,9 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 		void	*block_end = (void *)new_block + sizeof(t_block) + size;
 		void	*heap_end = (void *)heap + heap->total_size;
 		if (block_end < heap_end) {
-			block_init(new_block, size);
+			block_init(new_block, size, 0);
 			block->next = new_block;
 			new_block->prev = block;
-			new_block->free = 0;
 			heap->block_count++;
 			return (BLOCK_SHIFT(new_block));
 		}
@@ -64,11 +64,7 @@ void	*large_malloc(const size_t size) {
 	if (block == MAP_FAILED)
 		return (MAP_FAILED);
 
-	block_init(block, total_size);
-	if (!g_malloc_zones.large)
-		g_malloc_zones.large = block;
-	else
-		block_push_back(&g_malloc_zones.large, block);
+	block_init(block, total_size, 0);
 	return BLOCK_SHIFT(block);
 }
 
@@ -91,8 +87,10 @@ void	*malloc_internal(size_t size) {
 void* malloc(size_t size) {
 	void	*result;
 
-	pthread_mutex_lock(&g_mutex);
+//	pthread_mutex_lock(&g_mutex);
+	dprintf(2, "calling malloc(%zu)\n", size);
 	result = malloc_internal(size);
-	pthread_mutex_unlock(&g_mutex);
+	dprintf(2, "malloc returns %p for size %zu\n", result, size);
+//	pthread_mutex_unlock(&g_mutex);
 	return (result);
 }

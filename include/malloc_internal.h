@@ -46,8 +46,8 @@ extern pthread_mutex_t	g_mutex;
 
 #define PAGE_SIZE getpagesize()
 
-# define ZONE_SHIFT(start) ((void *)start + sizeof(t_heap))
-# define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
+# define ZONE_SHIFT(start) ((void *)(start) + sizeof(t_heap))
+# define BLOCK_SHIFT(start) ((void *)(start) + sizeof(t_block))
 
 # define TINY_HEAP_ALLOCATION_SIZE (size_t)(8 * PAGE_SIZE) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
@@ -63,7 +63,7 @@ void	*free_block(t_heap* heap, t_block* block);
 
 // find_ptr.c
 typedef void*(*loop_func)(t_heap*,t_block*);
-t_block	*loop_blocks(t_block* block, void* ptr, bool remove);
+t_block	*loop_blocks(t_block* block, void* ptr);
 void	*loop_heap(t_heap* heap, void* ptr, loop_func func);
 // shared.c
 
@@ -75,7 +75,7 @@ void	remove_heap_from_list(t_heap *heap);
 void	release_heap(t_heap *heap);
 
 // t_block.c
-t_block *block_init(t_block *b, size_t size);
+t_block *block_init(t_block *b, size_t size, int free);
 void	block_push_back(t_block ** blocks, t_block* new_block);
 void 	remove_block_from_list(t_block *block);
 

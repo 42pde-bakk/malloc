@@ -36,7 +36,7 @@ void *realloc_loop_heap(t_heap* heap, void* ptr, size_t size) {
 	t_block	*result = NULL;
 
 	while (heap) {
-		if ((result = loop_blocks(ZONE_SHIFT(heap), ptr, false))) {
+		if ((result = loop_blocks(ZONE_SHIFT(heap), ptr))) {
 			return (realloc_check(result, heap, size));
 		}
 		heap = heap->next;
@@ -46,7 +46,7 @@ void *realloc_loop_heap(t_heap* heap, void* ptr, size_t size) {
 
 void	*realloc_large(void *ptr, size_t size) {
 	void *malloc_ret;
-	t_block	*block = loop_blocks(g_malloc_zones.large, ptr, false);
+	t_block	*block = loop_blocks(g_malloc_zones.large, ptr);
 
 	if (!block)
 		return (NULL);
@@ -96,8 +96,10 @@ void	*realloc_internal(void *ptr, size_t size) {
 void	*realloc(void *ptr, size_t size) {
 	void *res;
 
-	pthread_mutex_lock(&g_mutex);
+//	pthread_mutex_lock(&g_mutex);
+	dprintf(2, "calling realloc(%p and %zu)\n", ptr, size);
 	res = realloc_internal(ptr, size);
-	pthread_mutex_unlock(&g_mutex);
+	dprintf(2, "realloc returns %p for size %zu\n", ptr, size);
+//	pthread_mutex_unlock(&g_mutex);
 	return (res);
 }

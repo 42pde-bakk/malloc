@@ -31,9 +31,9 @@ function run_test {
   echo "${MAGENTA}Ran ${test_exec}${END}"
 }
 
-run_test allocation
-run_test double_free
-run_test free_invalid_ptr
-run_test realloc_same_size
+#run_test allocation
+#run_test double_free
+#run_test free_invalid_ptr
+#run_test realloc_same_size
 run_test munmap
-run_test mix
+#run_test mix

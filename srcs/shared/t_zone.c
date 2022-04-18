@@ -6,7 +6,7 @@
 #include <assert.h>
 
 t_heap *allocateHeap(size_t alloc_size) {
-	size_t real = PAGE_SIZE;
+	size_t	real = PAGE_SIZE;
 	while (alloc_size > real)
 		real += PAGE_SIZE;
 
@@ -19,7 +19,7 @@ t_heap *allocateHeap(size_t alloc_size) {
 	newHeap->prev = NULL;
 	newHeap->next = NULL;
 
-	block_init(ZONE_SHIFT(newHeap), -1);
+	block_init(ZONE_SHIFT(newHeap), -1, 0);
 	return (newHeap);
 }
 
@@ -32,8 +32,8 @@ t_heap *get_last_zone(t_heap *zone) {
 	return (zone);
 }
 
-void	heap_push_back(t_heap** heap, t_heap* new_heap) {
-	t_heap* tmp = *heap;
+void	heap_push_back(t_heap **heap, t_heap *new_heap) {
+	t_heap	*tmp = *heap;
 
 	while (tmp->next) {
 		tmp = tmp->next;
@@ -43,7 +43,7 @@ void	heap_push_back(t_heap** heap, t_heap* new_heap) {
 }
 
 void	extend_heap(t_heap* heap, const size_t alloc_size) {
-	t_heap* newHeap = allocateHeap(alloc_size);
+	t_heap	*newHeap = allocateHeap(alloc_size);
 	heap_push_back(&heap, newHeap);
 }
 
@@ -55,7 +55,7 @@ void remove_heap_from_list(t_heap *heap) {
 }
 
 void	release_heap(t_heap *heap) {
-	int ret = munmap((void *)heap, heap->total_size);
+	const int	ret = munmap((void *)heap, heap->total_size);
 	if (ret)
 		perror("munmap in free_block");
 }
