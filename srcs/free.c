@@ -26,20 +26,20 @@ void	release_zone(t_heap *zone) {
 }
 
 void*	free_block(t_heap* heap, t_block* block) {
-	dprintf(2, "in free_block: block->free = %d\n", block->free);
+//	dprintf(2, "in free_block: block->free = %d\n", block->free);
 	if (block->free)
 		return (NULL);
 	block->free = 1;
 	assert(heap->block_count > 0);
 	heap->block_count--;
-	dprintf(2, "heap->block_count = %zu\n", heap->block_count);
+//	dprintf(2, "heap->block_count = %zu\n", heap->block_count);
 	return (heap);
 }
 
 // not locking the mutex here
 void	free_internal(void* ptr) {
 	void	*result = NULL;
-	dprintf(2, "lets loop for tiny\n");
+//	dprintf(2, "lets loop for tiny\n");
 	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
@@ -50,7 +50,7 @@ void	free_internal(void* ptr) {
 		}
 		return ;
 	}
-	dprintf(2, "lets loop for small\n");
+//	dprintf(2, "lets loop for small\n");
 	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
@@ -74,10 +74,9 @@ void	free_internal(void* ptr) {
 }
 
 void    free(void* ptr) {
-	dprintf(2, "lets free %p\n", ptr);
+//	dprintf(2, "lets free %p\n", ptr);
 	if (!ptr)
 		return ;
-
 
 	pthread_mutex_lock(&g_mutex);
 	free_internal(ptr);
