@@ -2,10 +2,11 @@
 // Created by Peer De bakker on 3/3/22.
 //
 
-#include "peer_stdlib.h"
+#include <stdlib.h>
 //#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include "malloc_internal.h"
 
 void	test_same_pointer(const size_t size) {
 	void	*ptr = malloc(size);

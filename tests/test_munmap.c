@@ -2,9 +2,10 @@
 // Created by Peer De bakker on 3/3/22.
 //
 
-#include "peer_stdlib.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include "malloc_internal.h"
 
 void	test_munmap_zone() {
 	size_t max_nb = 150;
@@ -16,7 +17,7 @@ void	test_munmap_zone() {
 		printf("ptrs_tiny[%d] = %p\n", i, ptrs_tiny[i]);
 		ptrs_small[i] = malloc(SMALL_BLOCK_SIZE);
 	}
-	assert(g_coll.tiny->next != NULL);
+	assert(g_malloc_zones.tiny->next != NULL);
 	show_alloc_mem();
 
 	for (int i = max_nb - 1; i >= 0; --i) {
@@ -24,7 +25,7 @@ void	test_munmap_zone() {
 		free(ptrs_tiny[i]);
 		free(ptrs_small[i]);
 	}
-	assert(g_coll.tiny->next == NULL);
+	assert(g_malloc_zones.tiny->next == NULL);
 }
 
 int main() {

@@ -2,7 +2,7 @@
 // Created by Peer De bakker on 3/26/22.
 //
 
-#include "peer_stdlib.h"
+#include "malloc_internal.h"
 
 t_block *block_init(t_block *b, const size_t size) {
 	b->data_size = size;

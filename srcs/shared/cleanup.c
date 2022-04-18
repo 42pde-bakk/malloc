@@ -2,7 +2,7 @@
 // Created by Peer De bakker on 3/3/22.
 //
 
-#include "peer_stdlib.h"
+#include "malloc_internal.h"
 #include <stdio.h>
 
 static void	unmap_all_zones(t_heap* zone) {

@@ -5,7 +5,7 @@ endif
 NAME = libft_malloc_$(HOSTTYPE).so
 LIB_NAME = lft_malloc_$(HOSTTYPE)
 INCLUDE = -Iinclude
-HEADER = include/peer_stdlib.h
+HEADER = include/malloc.h include/malloc_internal.h
 
 SRC_DIR = srcs
 BUILD_DIR = obj

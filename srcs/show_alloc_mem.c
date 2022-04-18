@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include "peer_stdlib.h"
+#include "malloc_internal.h"
 #include "libc.h"
 
 void	print_block_content(void *ptr_start, void *ptr_end, size_t amount_bytes) {
