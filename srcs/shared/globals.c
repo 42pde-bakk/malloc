@@ -2,6 +2,7 @@
 // Created by Peer De bakker on 3/2/22.
 //
 
+#include <fcntl.h>
 #include "malloc_internal.h"
 
 t_malloc_zones g_malloc_zones = {
@@ -9,4 +10,6 @@ t_malloc_zones g_malloc_zones = {
 		.small = NULL,
 		.large = NULL
 };
+
 pthread_mutex_t	g_mutex = PTHREAD_MUTEX_INITIALIZER;
+
