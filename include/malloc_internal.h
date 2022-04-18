@@ -49,9 +49,9 @@ extern pthread_mutex_t g_mutex;
 # define ZONE_SHIFT(start) ((void *)start + sizeof(t_heap))
 # define BLOCK_SHIFT(start) ((void *)start + sizeof(t_block))
 
-# define TINY_HEAP_ALLOCATION_SIZE (size_t)(1 * getpagesize()) // 4
+# define TINY_HEAP_ALLOCATION_SIZE (size_t)(4 * PAGE_SIZE) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
-# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(4 * getpagesize()) // 16
+# define SMALL_HEAP_ALLOCATION_SIZE (size_t)(64 * PAGE_SIZE) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
 
 void free_internal(void *ptr);

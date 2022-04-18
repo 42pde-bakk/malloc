@@ -2,8 +2,8 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = libft_malloc_$(HOSTTYPE).so
-LIB_NAME = lft_malloc_$(HOSTTYPE)
+NAME := libft_malloc_$(HOSTTYPE).so
+LIBNAME := libft_malloc.so
 INCLUDE = -Iinclude
 HEADER = include/malloc.h include/malloc_internal.h
 
@@ -45,7 +45,7 @@ directories:
 
 $(NAME): $(OBJECTS) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
-	ln -sf $(HOSTTYPE) libft_malloc.so
+	ln -sf $(NAME) $(LIBNAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
@@ -56,7 +56,7 @@ clean:
 	/bin/rm -f $(OBJECTS)
 
 fclean: clean
-	/bin/rm -f $(NAME)
+	/bin/rm -f $(NAME) $(LIBNAME)
 
 re: fclean all
 
