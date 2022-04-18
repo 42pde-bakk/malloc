@@ -20,15 +20,10 @@ static void	malloc_init(const size_t size) {
 
 void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 	while (heap) {
-//		dprintf(2, "checking heap %p\n", (void*)heap);
 		t_block* block = ZONE_SHIFT(heap);
-//		dprintf(2, "got block\n");
 		while (block) {
 			if (block->data_size == (size_t)-1 || (block->free && block->data_size >= size)) {
 				// We can re-use this block
-//				check(block);
-//				check(BLOCK_SHIFT(block));
-//				printf("sizeof block = %zu\n", sizeof(t_block));
 				block->free = 0;
 				if (block->data_size == (size_t)-1)
 					block->data_size = size;
@@ -41,17 +36,18 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 			block = block->next;
 		}
 		// Couldn't find a spot in our existing linked list of blocks, but maybe we can append a block?
-		t_block *new_block = (t_block*)(block + block->data_size);
+		t_block *new_block = (t_block*)((void*)block + sizeof(t_block) + block->data_size);
 		void	*block_end = (void *)new_block + sizeof(t_block) + size;
 		void	*heap_end = (void *)heap + heap->total_size;
 		if (block_end < heap_end) {
 			block_init(new_block, size);
 			block->next = new_block;
+			new_block->prev = block;
+			new_block->free = 0;
 			return (BLOCK_SHIFT(new_block));
 		}
 		if (!heap->next) {
 			// extend zone
-//			dprintf(2, "lets extend the heap\n");
 			extend_heap(heap, heap_alloc_size);
 		}
 		heap = heap->next;
@@ -62,14 +58,12 @@ void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 void	*large_malloc(const size_t size) {
 	t_block	*block;
 	const size_t total_size = size + sizeof(t_block);
-	dprintf(2, "total_size = %zu\n", total_size);
 
 	block = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (block == MAP_FAILED)
 		return (MAP_FAILED);
 
 	block_init(block, total_size);
-	dprintf(2, "after block_init, block->size = %zu, block->free = %d\n", block->data_size, block->free);
 	if (!g_malloc_zones.large)
 		g_malloc_zones.large = block;
 	else
@@ -88,7 +82,6 @@ void	*malloc_internal(size_t size) {
 	} else if (size <= SMALL_BLOCK_SIZE) {
 		result = find_spot_in_heaplist(g_malloc_zones.small, size, SMALL_HEAP_ALLOCATION_SIZE);
 	} else {
-		dprintf(2, "lets go large\n");
 		result = large_malloc(size);
 	}
 	return (result);
@@ -100,7 +93,5 @@ void* malloc(size_t size) {
 	pthread_mutex_lock(&g_mutex);
 	result = malloc_internal(size);
 	pthread_mutex_unlock(&g_mutex);
-//	printf("malloc returns %p\n", result);
-//	check(result);
 	return (result);
 }
