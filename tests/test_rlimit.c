@@ -34,6 +34,7 @@ int main() {
 	else
 		dprintf(2, "nice job, malloc returned a pointer!\n");
 	free(t);
+	t = NULL;
 
 	if ((t = (char *)malloc(BIG_SIZE))) {
 		dprintf(2, "malloc() should return NULL\n");
