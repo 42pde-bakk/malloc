@@ -14,18 +14,13 @@ int main() {
 	char *t;
 	struct rlimit rpl;
 
-	dprintf(2, "beginning\n");
-
 	getrlimit(RLIMIT_DATA, &rpl);
-	dprintf(2, "rlimit: %llu, %llu\n", rpl.rlim_cur, rpl.rlim_max);
 
 	rpl.rlim_cur = BIG_SIZE;
 	rpl.rlim_max = BIG_SIZE;
 
 	if (setrlimit(RLIMIT_DATA, &rpl) < 0)
 		dprintf(2, "setrlimit did not work\n");
-
-	dprintf(2, "rlimit: %llu, %llu\n", rpl.rlim_cur, rpl.rlim_max);
 
 	if (!(t = (char *)malloc(10000))) {
 		dprintf(2, "malloc() should return ptr\n");
