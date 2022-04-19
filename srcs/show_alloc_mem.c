@@ -2,7 +2,6 @@
 // Created by Peer De bakker on 3/2/22.
 //
 
-#include <stdio.h>
 #include "malloc_internal.h"
 #include "libc.h"
 

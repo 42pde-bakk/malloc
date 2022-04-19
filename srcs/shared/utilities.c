@@ -3,13 +3,8 @@
 //
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdbool.h>
 #include "malloc_internal.h"
-
-void	check(void* ptr) {
-	printf("is ptr %p 16byte aligned?: %d\n", ptr, ((uintptr_t)ptr & 0xFu) == 0);
-}
 
 size_t	align_16bytes(const size_t size) {
 	return (size + 15u) & ~0xFu;

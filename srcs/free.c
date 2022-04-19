@@ -3,8 +3,6 @@
 //
 
 #include "malloc_internal.h"
-#include <stdio.h>
-#include <assert.h>
 #include <libc.h>
 
 void	error_free(void *ptr) {
@@ -56,15 +54,9 @@ int free_internal(void* ptr) {
 	}
 	if ((result = loop_blocks(g_malloc_zones.large, ptr))) {
 		t_block	*block = (t_block *)result;
-//		assert(block != block->next);
 		if (g_malloc_zones.large == block)
 			g_malloc_zones.large = block->next;
 		remove_block_from_list(block);
-//		if (block->prev)
-//			assert(block->prev != block->prev->next);
-//		if (block->next)
-//			assert(block->next != block->next->prev);
-//		assert(g_malloc_zones.large != block);
 		if (munmap(block, block->data_size))
 			ft_putstr_fd("munmap failed\n", 2);
 		return (0);

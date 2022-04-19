@@ -13,11 +13,6 @@
 # include <sys/resource.h> // getrlimit (2)
 # include <pthread.h> // mutex
 
-# include <sys/errno.h> // TODO: REMOVE
-extern int errno;
-
-#include <stdio.h>
-
 typedef struct s_block {
 	size_t	data_size;
 	int		dummy;
@@ -85,11 +80,7 @@ void	declutter_freed_areas(t_block *block);
 // show_alloc_mem.c
 void	show_alloc_mem();
 
-//cleanup.c
-void	cleanup();
-
 // utilities.c
-void	check(void* ptr);
 size_t	align_16bytes(size_t size);
 bool	isTiny(size_t size);
 bool	isSmall(size_t size);

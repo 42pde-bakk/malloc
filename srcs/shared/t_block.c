@@ -2,7 +2,6 @@
 // Created by Peer De bakker on 3/26/22.
 //
 
-#include <assert.h>
 #include "malloc_internal.h"
 
 t_block *block_init(t_block *b, size_t size, int free) {
@@ -23,8 +22,6 @@ t_block	*get_last_block(t_heap *zone) {
 
 void	block_push_back(t_block **blocks, t_block* new_block) {
 	t_block* tmp = *blocks;
-
-	assert(blocks);
 
 	if (tmp) {
 		while (tmp->next)

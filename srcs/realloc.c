@@ -4,7 +4,6 @@
 
 #include "malloc_internal.h"
 #include "libc.h"
-#include <stdio.h>
 
 void	error_realloc(void *ptr) {
 	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);

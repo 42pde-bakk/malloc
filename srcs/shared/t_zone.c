@@ -3,7 +3,6 @@
 //
 
 #include "malloc_internal.h"
-#include <assert.h>
 #include <libc.h>
 
 t_heap *allocateHeap(size_t alloc_size) {
