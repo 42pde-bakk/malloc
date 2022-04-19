@@ -8,18 +8,18 @@
 static void	malloc_init(const size_t size) {
 	if (!g_malloc_zones.tiny && isTiny(size)) {
 		g_malloc_zones.tiny = allocateHeap(TINY_HEAP_ALLOCATION_SIZE);
-		t_block *first = ZONE_SHIFT(g_malloc_zones.tiny);
+		t_block *first = HEAP_SHIFT(g_malloc_zones.tiny);
 		first->data_size = (size_t)-1;
 	} else if (!g_malloc_zones.small && isSmall(size)) {
 		g_malloc_zones.small = allocateHeap(SMALL_HEAP_ALLOCATION_SIZE);
-		t_block *first = ZONE_SHIFT(g_malloc_zones.small);
+		t_block *first = HEAP_SHIFT(g_malloc_zones.small);
 		first->data_size = (size_t)-1;
 	}
 }
 
 void*	find_spot_in_heaplist(t_heap* heap, size_t size, size_t heap_alloc_size) {
 	while (heap) {
-		t_block* block = ZONE_SHIFT(heap);
+		t_block* block = HEAP_SHIFT(heap);
 		while (block) {
 			if (block->data_size == (size_t)-1 || (block->free && block->data_size >= size)) {
 				// We can re-use this block

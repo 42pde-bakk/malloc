@@ -40,7 +40,6 @@ int main() {
 //	check_allocations(1025);
 //	printf("Let's check large allocations:\n");
 //	check_allocations(2500);
-	dprintf(2, "DONE WITH ALLOCATING\n");
 
 	show_alloc_mem();
 	return (0);

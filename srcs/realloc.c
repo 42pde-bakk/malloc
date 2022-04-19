@@ -5,7 +5,7 @@
 #include "malloc_internal.h"
 #include "libc.h"
 
-void	error_realloc(void *ptr) {
+static void	error_realloc(void *ptr) {
 	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
 	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
 	ft_putstr_fd(": pointer being realloc'd was not allocated\n", STDERR_FILENO);
@@ -36,7 +36,7 @@ void *realloc_loop_heap(t_heap* heap, void* ptr, size_t size) {
 	t_block	*result = NULL;
 
 	while (heap) {
-		if ((result = loop_blocks(ZONE_SHIFT(heap), ptr))) {
+		if ((result = loop_blocks(HEAP_SHIFT(heap), ptr))) {
 			return (realloc_check(result, heap, size));
 		}
 		heap = heap->next;
@@ -89,7 +89,8 @@ void	*realloc_internal(void *ptr, size_t size) {
 	if ((result = realloc_large(ptr, size))) {
 		return (result);
 	}
-	// error_realloc(ptr);
+	if (DEBUG_FAULTY_POINTERS)
+		 error_realloc(ptr);
 	return (NULL);
 }
 

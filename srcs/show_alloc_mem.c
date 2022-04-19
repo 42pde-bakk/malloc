@@ -44,7 +44,7 @@ static size_t	show_zones(const t_heap* zone, const char* str) {
 	size_t	total_size = 0;
 	for (const t_heap* tmp = zone; tmp; tmp = tmp->next) {
 		print_zone_header(str, (void *)tmp);
-		total_size += show_blocks(ZONE_SHIFT(tmp));
+		total_size += show_blocks(HEAP_SHIFT(tmp));
 	}
 	return (total_size);
 }
