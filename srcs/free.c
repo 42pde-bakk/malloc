@@ -2,58 +2,74 @@
 // Created by Peer De bakker on 2/14/22.
 //
 
-#include "peer_stdlib.h"
-#include <stdio.h>
-#include <assert.h>
+#include "malloc_internal.h"
+#include <libc.h>
 
-static void	error_free(void *ptr) {
-	dprintf(2, "malloc *** error for object %p: pointer being freed was not allocated\n", ptr);
-	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
-	pthread_mutex_unlock(&g_mutex);
+void	error_free(void *ptr) {
+	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
+	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
+	ft_putstr_fd(": pointer being freed was not allocated\n", STDERR_FILENO);
 }
 
-void	release_zone(t_zone *zone) {
+void	release_zone(t_heap *zone) {
 	if (zone->prev)
 		zone->prev->next = zone->next;
 	if (zone->next)
 		zone->next->prev = zone->prev;
-	int ret = munmap((void *)zone, zone->total_size);
-	if (ret) {
-		// TODO: remove
-		perror("munmap");
-		printf("tried to call munmap(%p, %zu)\n", (void*)zone, zone->total_size);
-		assert(0);
+	if (munmap((void *)zone, zone->total_size)) {
+		ft_putstr_fd("munmap failed\n", STDERR_FILENO);
 	}
-	pthread_mutex_unlock(&g_mutex);
+}
+
+void*	free_block(t_heap* heap, t_block* block) {
+	if (block->free)
+		return (NULL);
+	block->free = 1;
+	heap->block_count--;
+	return (heap);
+}
+
+// not locking the mutex here
+int free_internal(void* ptr) {
+	void	*result = NULL;
+	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
+		t_heap	*heap = (t_heap *)result;
+		if (heap->block_count == 0 && (heap->prev || heap->next)) {
+			if (g_malloc_zones.tiny == heap)
+				g_malloc_zones.tiny = heap->next;
+			remove_heap_from_list(heap);
+			release_heap(heap);
+		}
+		return (0);
+	}
+	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
+		t_heap	*heap = (t_heap *)result;
+		if (heap->block_count == 0 && (heap->prev || heap->next)) {
+			if (g_malloc_zones.small == heap)
+				g_malloc_zones.small = heap->next;
+			remove_heap_from_list(heap);
+			release_heap(heap);
+		}
+		return (0);
+	}
+	if ((result = loop_blocks(g_malloc_zones.large, ptr))) {
+		t_block	*block = (t_block *)result;
+		if (g_malloc_zones.large == block)
+			g_malloc_zones.large = block->next;
+		remove_block_from_list(block);
+		if (munmap(block, block->data_size))
+			ft_putstr_fd("munmap failed\n", 2);
+		return (0);
+	}
+	// error_free(ptr);
+	return (1);
 }
 
 void    free(void* ptr) {
-	t_zone	*zone;
-	t_block	*block;
-
 	if (!ptr)
 		return ;
 
 	pthread_mutex_lock(&g_mutex);
-	zone = check_smaller_zones(ptr);
-	if (!zone) {
-		zone = check_large_zone_ll(ptr);
-		if (zone)
-			return (release_zone(zone));
-		return (error_free(ptr));
-	}
-	block = find_block(ptr, zone);
-	if (!block || block->status == FREED)
-		return (error_free(ptr));
-
-	release_block(block, zone);
-
-	if (zone->block_count == 0 && (zone->prev || zone->next)) {
-		// munmap the zone if it contains no blocks
-		// but only if it isn't the only zone of it's size
-		// Will this also work for my large ones?
-		return (release_zone(zone));
-	}
-	// try to combine freed blocks if possible (or is that bonus)
+	free_internal(ptr);
 	pthread_mutex_unlock(&g_mutex);
 }

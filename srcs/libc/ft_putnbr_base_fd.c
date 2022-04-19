@@ -5,7 +5,7 @@
 #include "libc.h"
 
 void	ft_putnbr_base_fd(unsigned long long nb, int base, int fd) {
-	char tab[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+	char tab[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	if (nb >= (unsigned long long)base) {
 		ft_putnbr_base_fd(nb / base, base, fd);

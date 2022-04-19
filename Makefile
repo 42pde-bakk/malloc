@@ -2,10 +2,10 @@ ifeq ($(HOSTTYPE),)
 	HOSTTYPE := $(shell uname -m)_$(shell uname -s)
 endif
 
-NAME = libft_malloc_$(HOSTTYPE).so
-LIB_NAME = lft_malloc_$(HOSTTYPE)
+NAME := libft_malloc_$(HOSTTYPE).so
+LIBNAME := libft_malloc.so
 INCLUDE = -Iinclude
-HEADER = include/peer_stdlib.h
+HEADER = include/malloc.h include/malloc_internal.h
 
 SRC_DIR = srcs
 BUILD_DIR = obj
@@ -26,7 +26,7 @@ RED = \x1b[31;01m
 WHITE = \x1b[31;37m
 RESET = \x1b[0m
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -pthread
 ifdef DEBUG
  CFLAGS += -g3
 endif
@@ -45,6 +45,7 @@ directories:
 
 $(NAME): $(OBJECTS) $(HEADER)
 	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
+	ln -sf $(NAME) $(LIBNAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
@@ -55,7 +56,9 @@ clean:
 	/bin/rm -f $(OBJECTS)
 
 fclean: clean
-	/bin/rm -f $(NAME)
+	/bin/rm -f $(NAME) $(LIBNAME)
+	/bin/rm -f libft_malloc_*.so
+	/bin/rm -rf *.dSYM
 
 re: fclean all
 
