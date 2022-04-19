@@ -15,7 +15,7 @@
 
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
-
+extern int g_log;
 #include <stdio.h>
 
 typedef struct s_block {
@@ -54,7 +54,7 @@ extern pthread_mutex_t	g_mutex;
 # define SMALL_HEAP_ALLOCATION_SIZE (size_t)(64 * PAGE_SIZE) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
 
-void	free_internal(void *ptr);
+int free_internal(void *ptr);
 void	*malloc_internal(size_t size);
 void	*realloc_internal(void *ptr, size_t size);
 

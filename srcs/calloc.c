@@ -8,12 +8,14 @@
 void *calloc(size_t nmemb, size_t size) {
 	void	*ptr;
 
-	//	pthread_mutex_lock(&g_mutex);
-	dprintf(2, "calling calloc(%zu, %zu)\n", nmemb, size);
+	pthread_mutex_lock(&g_mutex);
+	if (g_log)
+		dprintf(2, "calling calloc(%zu, %zu)\n", nmemb, size);
 	ptr = malloc_internal(nmemb * size);
 	if (ptr)
 		ft_memset(ptr, 0, nmemb * size);
-	dprintf(2, "calloc returns %p\n", ptr);
-	//	pthread_mutex_unlock(&g_mutex);
+	if (g_log)
+		dprintf(2, "calloc returns %p\n", ptr);
+	pthread_mutex_unlock(&g_mutex);
 	return (ptr);
 }

@@ -8,7 +8,7 @@
 
 static void	error_free(void *ptr) {
 	dprintf(2, "malloc *** error for object %p: pointer being freed was not allocated\n", ptr);
-	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
+//	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
 }
 
 void	release_zone(t_heap *zone) {
@@ -20,7 +20,7 @@ void	release_zone(t_heap *zone) {
 	if (ret) {
 		// TODO: remove
 		perror("munmap");
-		printf("tried to call munmap(%p, %zu)\n", (void*)zone, zone->total_size);
+		dprintf(2, "tried to call munmap(%p, %zu)\n", (void*)zone, zone->total_size);
 		assert(0);
 	}
 }
@@ -37,7 +37,7 @@ void*	free_block(t_heap* heap, t_block* block) {
 }
 
 // not locking the mutex here
-void	free_internal(void* ptr) {
+int free_internal(void* ptr) {
 	void	*result = NULL;
 	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
@@ -47,7 +47,7 @@ void	free_internal(void* ptr) {
 			remove_heap_from_list(heap);
 			release_heap(heap);
 		}
-		return ;
+		return (0);
 	}
 	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
 		t_heap	*heap = (t_heap *)result;
@@ -57,7 +57,7 @@ void	free_internal(void* ptr) {
 			remove_heap_from_list(heap);
 			release_heap(heap);
 		}
-		return ;
+		return (0);
 	}
 	if ((result = loop_blocks(g_malloc_zones.large, ptr))) {
 		t_block	*block = (t_block *)result;
@@ -72,19 +72,24 @@ void	free_internal(void* ptr) {
 		assert(g_malloc_zones.large != block);
 		if (munmap(block, block->data_size))
 			perror("munmap large");
-		return ;
+		return (0);
 	}
 	error_free(ptr);
+	return (1);
 }
 
 void    free(void* ptr) {
-//	dprintf(2, "lets free %p\n", ptr);
 	if (!ptr)
 		return ;
 
-//	pthread_mutex_lock(&g_mutex);
-	dprintf(2, "calling free(%p)\n", ptr);
-	free_internal(ptr);
-	dprintf(2, "freed %p\n", ptr);
-//	pthread_mutex_unlock(&g_mutex);
+	pthread_mutex_lock(&g_mutex);
+	if (g_log)
+		dprintf(2, "calling free(%p)\n", ptr);
+	if (free_internal(ptr)) {
+		pthread_mutex_unlock(&g_mutex);
+		return ;
+	}
+	if (g_log)
+		dprintf(2, "freed %p\n", ptr);
+	pthread_mutex_unlock(&g_mutex);
 }

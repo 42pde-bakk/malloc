@@ -96,10 +96,12 @@ void	*realloc_internal(void *ptr, size_t size) {
 void	*realloc(void *ptr, size_t size) {
 	void *res;
 
-//	pthread_mutex_lock(&g_mutex);
-	dprintf(2, "calling realloc(%p and %zu)\n", ptr, size);
+	pthread_mutex_lock(&g_mutex);
+	if (g_log)
+		dprintf(2, "calling realloc(%p and %zu)\n", ptr, size);
 	res = realloc_internal(ptr, size);
-	dprintf(2, "realloc returns %p for size %zu\n", ptr, size);
-//	pthread_mutex_unlock(&g_mutex);
+	if (g_log)
+		dprintf(2, "realloc returns %p for size %zu\n", ptr, size);
+	pthread_mutex_unlock(&g_mutex);
 	return (res);
 }

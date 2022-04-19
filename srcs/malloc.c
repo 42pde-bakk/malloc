@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+int g_log = 0;
 
 static void	malloc_init(const size_t size) {
 	if (!g_malloc_zones.tiny && isTiny(size)) {
@@ -61,10 +62,16 @@ void	*large_malloc(const size_t size) {
 	const size_t total_size = size + sizeof(t_block);
 
 	block = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+//	dprintf(2, "large_malloc mmap: %p\n", (void *)block);
 	if (block == MAP_FAILED)
 		return (MAP_FAILED);
 
 	block_init(block, total_size, 0);
+	block_push_back(&g_malloc_zones.large, block);
+	assert(g_malloc_zones.large);
+	assert(block->next == NULL);
+	if (g_malloc_zones.large != block)
+		assert(block->prev);
 	return BLOCK_SHIFT(block);
 }
 
@@ -80,6 +87,8 @@ void	*malloc_internal(size_t size) {
 		result = find_spot_in_heaplist(g_malloc_zones.small, size, SMALL_HEAP_ALLOCATION_SIZE);
 	} else {
 		result = large_malloc(size);
+//		dprintf(2, "large_malloc: %p for %zu\n", result, size);
+//		dprintf(2, "g_malloc_zones.large: %p\n", g_malloc_zones.large);
 	}
 	return (result);
 }
@@ -87,10 +96,12 @@ void	*malloc_internal(size_t size) {
 void* malloc(size_t size) {
 	void	*result;
 
-//	pthread_mutex_lock(&g_mutex);
-	dprintf(2, "calling malloc(%zu)\n", size);
+	pthread_mutex_lock(&g_mutex);
+	if (g_log)
+		dprintf(2, "calling malloc(%zu)\n", size);
 	result = malloc_internal(size);
-	dprintf(2, "malloc returns %p for size %zu\n", result, size);
-//	pthread_mutex_unlock(&g_mutex);
+	if (g_log)
+		dprintf(2, "malloc returns %p for size %zu\n", result, size);
+	pthread_mutex_unlock(&g_mutex);
 	return (result);
 }
