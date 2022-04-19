@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include "malloc_internal.h"
 
-void run_test_rlimit()
-{
+int main() {
+	int exit_status = 0;
 	char *t;
 	struct rlimit rpl;
 
@@ -19,11 +19,16 @@ void run_test_rlimit()
 	if (setrlimit(RLIMIT_DATA, &rpl) < 0)
 		printf("setrlimit did not work\n");
 
-	if (!(t = (char *)malloc(TINY_HEAP_ALLOCATION_SIZE - sizeof(t_block) - sizeof(t_heap))))
+	if (!(t = (char *)malloc(TINY_HEAP_ALLOCATION_SIZE - sizeof(t_block) - sizeof(t_heap)))) {
 		printf("malloc() should return ptr\n");
+		exit_status = 1;
+	}
 	free(t);
 
-	if ((t = (char *)malloc(TINY_HEAP_ALLOCATION_SIZE)))
+	if ((t = (char *)malloc(TINY_HEAP_ALLOCATION_SIZE))) {
 		printf("malloc() should return NULL\n");
+		exit_status = 1;
+	}
 	free(t);
+	return (exit_status);
 }

@@ -34,3 +34,4 @@ run_test realloc_same_size
 run_test munmap
 run_test mix
 run_test multithreaded
+run_test rlimit

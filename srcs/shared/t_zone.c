@@ -4,16 +4,18 @@
 
 #include "malloc_internal.h"
 #include <assert.h>
+#include <libc.h>
 
 t_heap *allocateHeap(size_t alloc_size) {
 	size_t	real = PAGE_SIZE;
 	while (alloc_size > real)
 		real += PAGE_SIZE;
 
-	assert(real % PAGE_SIZE == 0);
+	if (alloc_size > get_rlimit_data())
+		return (NULL);
 	t_heap	*newHeap = mmap(NULL, real, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (newHeap == MAP_FAILED)
-		return (MAP_FAILED);
+		return (NULL);
 	newHeap->total_size = real;
 	newHeap->block_count = 0;
 	newHeap->prev = NULL;
@@ -44,7 +46,8 @@ void	heap_push_back(t_heap **heap, t_heap *new_heap) {
 
 void	extend_heap(t_heap* heap, const size_t alloc_size) {
 	t_heap	*newHeap = allocateHeap(alloc_size);
-	heap_push_back(&heap, newHeap);
+	if (newHeap)
+		heap_push_back(&heap, newHeap);
 }
 
 void remove_heap_from_list(t_heap *heap) {
@@ -55,7 +58,6 @@ void remove_heap_from_list(t_heap *heap) {
 }
 
 void	release_heap(t_heap *heap) {
-	const int	ret = munmap((void *)heap, heap->total_size);
-	if (ret)
-		perror("munmap in free_block");
+	if (munmap((void *)heap, heap->total_size))
+		ft_putstr_fd("munmap in free_block\n", 2);
 }

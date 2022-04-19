@@ -30,3 +30,11 @@ bool	isLarge(const size_t size) {
 bool	isSameCategory(const size_t a, const size_t b) {
 	return ((isTiny(a) && isTiny(b)) || (isSmall(a) && isSmall(b)) || (isLarge(a) && isLarge(b)));
 }
+
+rlim_t get_rlimit_data() {
+	struct rlimit rpl;
+
+	if (getrlimit(RLIMIT_DATA, &rpl) < 0)
+		return (-1);
+	return (rpl.rlim_max);
+}

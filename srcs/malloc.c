@@ -3,7 +3,6 @@
 //
 
 #include <stdio.h>
-#include <assert.h>
 #include "malloc_internal.h"
 #include "libc.h"
 
@@ -60,17 +59,14 @@ void	*large_malloc(const size_t size) {
 	t_block	*block;
 	const size_t total_size = size + sizeof(t_block);
 
+	if (total_size > get_rlimit_data())
+		return (NULL);
 	block = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-//	dprintf(2, "large_malloc mmap: %p\n", (void *)block);
 	if (block == MAP_FAILED)
-		return (MAP_FAILED);
+		return (NULL);
 
 	block_init(block, total_size, 0);
 	block_push_back(&g_malloc_zones.large, block);
-//	assert(g_malloc_zones.large);
-//	assert(block->next == NULL);
-//	if (g_malloc_zones.large != block)
-//		assert(block->prev);
 	return BLOCK_SHIFT(block);
 }
 
