@@ -15,7 +15,7 @@
 
 # include <sys/errno.h> // TODO: REMOVE
 extern int errno;
-extern int g_log;
+
 #include <stdio.h>
 
 typedef struct s_block {

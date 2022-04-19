@@ -6,9 +6,10 @@
 #include "libc.h"
 #include <stdio.h>
 
-static void	error_realloc(void *ptr) {
-	dprintf(2, "malloc *** error for object %p: pointer being realloc'd was not allocated\n", ptr);
-	dprintf(2, "malloc: *** set a breakpoint in malloc_error_break to debug\n");
+void	error_realloc(void *ptr) {
+	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
+	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
+	ft_putstr_fd(": pointer being realloc'd was not allocated\n", STDERR_FILENO);
 }
 
 void*	realloc_check(t_block* block, t_heap* heap, size_t size) {
@@ -89,7 +90,7 @@ void	*realloc_internal(void *ptr, size_t size) {
 	if ((result = realloc_large(ptr, size))) {
 		return (result);
 	}
-	error_realloc(ptr);
+	// error_realloc(ptr);
 	return (NULL);
 }
 
@@ -97,11 +98,7 @@ void	*realloc(void *ptr, size_t size) {
 	void *res;
 
 	pthread_mutex_lock(&g_mutex);
-	if (g_log)
-		dprintf(2, "calling realloc(%p and %zu)\n", ptr, size);
 	res = realloc_internal(ptr, size);
-	if (g_log)
-		dprintf(2, "realloc returns %p for size %zu\n", ptr, size);
 	pthread_mutex_unlock(&g_mutex);
 	return (res);
 }

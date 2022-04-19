@@ -24,6 +24,5 @@ int main() {
 		free(small[i]);
 		free(large[i]);
 		i++;
-		printf("%zu\n", i);
 	}
 }

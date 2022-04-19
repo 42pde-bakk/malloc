@@ -25,7 +25,6 @@ static size_t	show_blocks(const t_block* block) {
 		void	*ptr_start = BLOCK_SHIFT(block);
 		void	*ptr_end = ptr_start + block->data_size;
 		print_block_content(ptr_start, ptr_end, block->data_size);
-		dprintf(2, "block->data_size = %zu\n", block->data_size);
 		total += block->data_size;
 	}
 	return (total);
@@ -64,6 +63,8 @@ static void	print_total_bytes(const size_t total) {
 }
 
 void	show_alloc_mem() {
+	ft_putstr_fd("show_alloc_mem\n", 2);
+
 	pthread_mutex_lock(&g_mutex);
 	size_t	total = 0;
 
@@ -74,4 +75,6 @@ void	show_alloc_mem() {
 
 	print_total_bytes(total);
 	pthread_mutex_unlock(&g_mutex);
+
+	ft_putstr_fd("~show_alloc_mem\n", 2);
 }

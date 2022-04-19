@@ -12,7 +12,6 @@ t_heap *allocateHeap(size_t alloc_size) {
 
 	assert(real % PAGE_SIZE == 0);
 	t_heap	*newHeap = mmap(NULL, real, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-//	dprintf(2, "large_malloc mmap: %p\n", (void *)newHeap);
 	if (newHeap == MAP_FAILED)
 		return (MAP_FAILED);
 	newHeap->total_size = real;

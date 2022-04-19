@@ -8,18 +8,14 @@ END=$'\e[0m'
 set -e
 
 mkdir -p bin
-LIBRARY=$1
-#export DYLD_LIBRARY_PATH=.
-#export DYLD_INSERT_LIBRARIES="libft_malloc_x86_64_Darwin.so"
-#export DYLD_FORCE_FLAT_NAMESPACE=1
 
 function comp {
   c_file=tests/"$1"
   bin_file="$2"
   if [ "$(uname)" == "Linux" ]; then
-    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude -Wl,-R.
+    gcc "$c_file" libft_malloc.so -o "$bin_file" -Iinclude -Wl,-R. -pthread
   elif [[ "$(uname)" == "Darwin" ]]; then
-    gcc "$c_file" "$LIBRARY" -o "$bin_file" -Iinclude
+    gcc "$c_file" libft_malloc.so -o "$bin_file" -Iinclude
   fi
 }
 

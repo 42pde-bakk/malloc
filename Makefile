@@ -26,7 +26,7 @@ RED = \x1b[31;01m
 WHITE = \x1b[31;37m
 RESET = \x1b[0m
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -pthread
 ifdef DEBUG
  CFLAGS += -g3
 endif
@@ -44,7 +44,7 @@ directories:
 	@mkdir -p $(BUILD_DIR)
 
 $(NAME): $(OBJECTS) $(HEADER)
-	$(CC) $(OBJECTS) -shared -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJECTS) -shared -o $(NAME)
 	ln -sf $(NAME) $(LIBNAME)
 	@printf "$(PINK)Done building malloc $(RESET)\n"
 
