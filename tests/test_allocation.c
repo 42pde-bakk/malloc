@@ -7,9 +7,11 @@
 #include <assert.h>
 #include <string.h>
 
+void	show_alloc_mem();
+
 void check_allocations(const size_t SIZE) {
 	int i = 0;
-	const size_t alloc_amount = 1000;
+	const size_t alloc_amount = 10;
 	char*	allocs[alloc_amount];
 
 	while (i < alloc_amount) {
@@ -29,10 +31,11 @@ int main() {
 	check_allocations(1);
 	printf("Let's check small allocations:\n");
 	check_allocations(42);
-	check_allocations(88);
-	check_allocations(128);
-	printf("Let's check large allocations:\n");
 	check_allocations(256);
 	check_allocations(1025);
+	printf("Let's check large allocations:\n");
+	check_allocations(2500);
+
+	show_alloc_mem();
 	return (0);
 }
