@@ -5,20 +5,10 @@
 #include "malloc_internal.h"
 #include <libc.h>
 
-void	error_free(void *ptr) {
+static void	error_free(void *ptr) {
 	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
 	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
 	ft_putstr_fd(": pointer being freed was not allocated\n", STDERR_FILENO);
-}
-
-void	release_zone(t_heap *zone) {
-	if (zone->prev)
-		zone->prev->next = zone->next;
-	if (zone->next)
-		zone->next->prev = zone->prev;
-	if (munmap((void *)zone, zone->total_size)) {
-		ft_putstr_fd("munmap failed\n", STDERR_FILENO);
-	}
 }
 
 void*	free_block(t_heap* heap, t_block* block) {
@@ -32,23 +22,28 @@ void*	free_block(t_heap* heap, t_block* block) {
 // not locking the mutex here
 int free_internal(void* ptr) {
 	void	*result = NULL;
-	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block))) {
+	t_block	*blocky = NULL;
+	if ((result = loop_heap(g_malloc_zones.tiny, ptr, free_block, &blocky))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
 			if (g_malloc_zones.tiny == heap)
 				g_malloc_zones.tiny = heap->next;
 			remove_heap_from_list(heap);
 			release_heap(heap);
+		} else if (BONUS && blocky) {
+			declutter_freed_areas(blocky);
 		}
 		return (0);
 	}
-	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block))) {
+	if ((result = loop_heap(g_malloc_zones.small, ptr, free_block, &blocky))) {
 		t_heap	*heap = (t_heap *)result;
 		if (heap->block_count == 0 && (heap->prev || heap->next)) {
 			if (g_malloc_zones.small == heap)
 				g_malloc_zones.small = heap->next;
 			remove_heap_from_list(heap);
 			release_heap(heap);
+		} else if (BONUS && blocky) {
+			declutter_freed_areas(blocky);
 		}
 		return (0);
 	}
@@ -61,7 +56,8 @@ int free_internal(void* ptr) {
 			ft_putstr_fd("munmap failed\n", 2);
 		return (0);
 	}
-	// error_free(ptr);
+	if (DEBUG_FAULTY_POINTERS)
+		 error_free(ptr);
 	return (1);
 }
 

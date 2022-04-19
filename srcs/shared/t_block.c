@@ -13,7 +13,7 @@ t_block *block_init(t_block *b, size_t size, int free) {
 }
 
 t_block	*get_last_block(t_heap *zone) {
-	t_block *b = (t_block *)ZONE_SHIFT(zone);
+	t_block *b = (t_block *)HEAP_SHIFT(zone);
 
 	while (b->next)
 		b = b->next;

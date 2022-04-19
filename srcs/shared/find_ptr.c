@@ -14,11 +14,12 @@ t_block*	loop_blocks(t_block* block, void* ptr) {
 	return (NULL);
 }
 
-void *loop_heap(t_heap* heap, void* ptr, loop_func func) {
+void *loop_heap(t_heap *heap, void *ptr, loop_func func, t_block **block) {
 	t_block	*result = NULL;
 
 	while (heap) {
-		if ((result = loop_blocks(ZONE_SHIFT(heap), ptr))) {
+		if ((result = loop_blocks(HEAP_SHIFT(heap), ptr))) {
+			*block = result;
 			return (func(heap, result));
 		}
 		heap = heap->next;

@@ -33,6 +33,12 @@ endif
 ifdef LEAKS
  CFLAGS += -g3 -fsanitize=address
 endif
+ifdef BONUS
+ CFLAGS += -D BONUS=1
+endif
+ifdef DEBUG_FAULTY_POINTERS
+ CFLAGS += -D DEBUG_FAULTY_POINTERS=1
+endif
 
 SHELL := /bin/bash
 export SHELL
@@ -59,6 +65,9 @@ fclean: clean
 	/bin/rm -f $(NAME) $(LIBNAME)
 	/bin/rm -f libft_malloc_*.so
 	/bin/rm -rf *.dSYM
+
+bonus: BONUS=1
+bonus: re
 
 re: fclean all
 

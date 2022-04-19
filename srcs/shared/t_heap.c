@@ -10,7 +10,7 @@ t_heap *allocateHeap(size_t alloc_size) {
 	while (alloc_size > real)
 		real += PAGE_SIZE;
 
-	if (alloc_size > get_rlimit_data())
+	if (real > get_rlimit_data())
 		return (NULL);
 	t_heap	*newHeap = mmap(NULL, real, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (newHeap == MAP_FAILED)
@@ -20,17 +20,17 @@ t_heap *allocateHeap(size_t alloc_size) {
 	newHeap->prev = NULL;
 	newHeap->next = NULL;
 
-	block_init(ZONE_SHIFT(newHeap), -1, 0);
+	block_init(HEAP_SHIFT(newHeap), -1, 0);
 	return (newHeap);
 }
 
-t_heap *get_last_zone(t_heap *zone) {
-	if (!zone)
+t_heap *get_last_heap(t_heap *heap) {
+	if (!heap)
 		return (NULL);
 
-	while (zone->next)
-		zone = zone->next;
-	return (zone);
+	while (heap->next)
+		heap = heap->next;
+	return (heap);
 }
 
 void	heap_push_back(t_heap **heap, t_heap *new_heap) {

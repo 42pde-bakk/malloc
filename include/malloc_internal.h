@@ -41,13 +41,21 @@ extern pthread_mutex_t	g_mutex;
 
 #define PAGE_SIZE getpagesize()
 
-# define ZONE_SHIFT(start) ((void *)(start) + sizeof(t_heap))
+# define HEAP_SHIFT(start) ((void *)(start) + sizeof(t_heap))
 # define BLOCK_SHIFT(start) ((void *)(start) + sizeof(t_block))
 
 # define TINY_HEAP_ALLOCATION_SIZE (size_t)(8 * PAGE_SIZE) // 4
 # define TINY_BLOCK_SIZE (size_t)(TINY_HEAP_ALLOCATION_SIZE / 128)
 # define SMALL_HEAP_ALLOCATION_SIZE (size_t)(64 * PAGE_SIZE) // 16
 # define SMALL_BLOCK_SIZE (size_t)(SMALL_HEAP_ALLOCATION_SIZE / 128)
+
+# ifndef DEBUG_FAULTY_POINTERS
+#  define DEBUG_FAULTY_POINTERS 0
+# endif
+
+# ifndef BONUS
+#  define BONUS 0
+# endif
 
 int		free_internal(void *ptr);
 void	*malloc_internal(size_t size);
@@ -59,7 +67,7 @@ void	*free_block(t_heap* heap, t_block* block);
 // find_ptr.c
 typedef void*(*loop_func)(t_heap*,t_block*);
 t_block	*loop_blocks(t_block* block, void* ptr);
-void	*loop_heap(t_heap* heap, void* ptr, loop_func func);
+void *loop_heap(t_heap *heap, void *ptr, loop_func func, t_block **block);
 // shared.c
 
 // zones.c
