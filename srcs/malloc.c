@@ -61,8 +61,9 @@ void	*large_malloc(const size_t size) {
 	if (total_size > get_rlimit_data())
 		return (NULL);
 	block = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-	if (block == MAP_FAILED)
+	if (block == MAP_FAILED) {
 		return (NULL);
+	}
 
 	block_init(block, total_size, 0);
 	block_push_back(&g_malloc_zones.large, block);

@@ -57,6 +57,8 @@ clean:
 
 fclean: clean
 	/bin/rm -f $(NAME) $(LIBNAME)
+	/bin/rm -f libft_malloc_*.so
+	/bin/rm -rf *.dSYM
 
 re: fclean all
 
