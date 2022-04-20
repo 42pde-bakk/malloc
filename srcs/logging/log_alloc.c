@@ -44,7 +44,7 @@ void log_heap_operation(const char *operation, void *ptr) {
 
 	if ((fd = open(LOG_PATH, O_CREAT | O_WRONLY | O_APPEND, 0644))) {
 		ft_putstr_fd(operation, fd);
-		ft_putstr_fd(" heap ", fd);
+		ft_putstr_fd(" heap 0x", fd);
 		ft_putnbr_base_fd((unsigned long long int) ptr, 16, fd, false);
 		ft_putstr_fd(".\n", fd);
 		close(fd);
