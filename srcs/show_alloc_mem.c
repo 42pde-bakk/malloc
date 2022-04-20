@@ -62,8 +62,6 @@ static void	print_total_bytes(const size_t total) {
 }
 
 void	show_alloc_mem() {
-	ft_putstr_fd("show_alloc_mem\n", 2);
-
 	pthread_mutex_lock(&g_mutex);
 	size_t	total = 0;
 
@@ -74,6 +72,4 @@ void	show_alloc_mem() {
 
 	print_total_bytes(total);
 	pthread_mutex_unlock(&g_mutex);
-
-	ft_putstr_fd("~show_alloc_mem\n", 2);
 }
