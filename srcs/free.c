@@ -6,8 +6,8 @@
 #include <libc.h>
 
 static void	error_free(void *ptr) {
-	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
-	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
+	ft_putstr_fd("malloc *** error for object 0x", STDERR_FILENO);
+	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO, false);
 	ft_putstr_fd(": pointer being freed was not allocated\n", STDERR_FILENO);
 }
 
@@ -16,6 +16,8 @@ void*	free_block(t_heap* heap, t_block* block) {
 		return (NULL);
 	block->free = 1;
 	heap->block_count--;
+	if (get_log_level(LOG_ALLOCS))
+		log_free(block->data_size);
 	return (heap);
 }
 
@@ -29,8 +31,9 @@ int free_internal(void* ptr) {
 			if (g_malloc_zones.tiny == heap)
 				g_malloc_zones.tiny = heap->next;
 			remove_heap_from_list(heap);
+			log_heap_operation("Released", (void *)heap);
 			release_heap(heap);
-		} else if (BONUS && blocky) {
+		} else if (DEFRAGMENT && blocky) {
 			declutter_freed_areas(blocky);
 		}
 		return (0);
@@ -41,8 +44,9 @@ int free_internal(void* ptr) {
 			if (g_malloc_zones.small == heap)
 				g_malloc_zones.small = heap->next;
 			remove_heap_from_list(heap);
+			log_heap_operation("Released", (void *)heap);
 			release_heap(heap);
-		} else if (BONUS && blocky) {
+		} else if (DEFRAGMENT && blocky) {
 			declutter_freed_areas(blocky);
 		}
 		return (0);
@@ -51,6 +55,7 @@ int free_internal(void* ptr) {
 		t_block	*block = (t_block *)result;
 		if (g_malloc_zones.large == block)
 			g_malloc_zones.large = block->next;
+		log_heap_operation("Released", (void *)block);
 		remove_block_from_list(block);
 		if (munmap(block, block->data_size))
 			ft_putstr_fd("munmap failed\n", 2);
@@ -66,6 +71,8 @@ void    free(void* ptr) {
 		return ;
 
 	pthread_mutex_lock(&g_mutex);
+	if (get_log_level(LOG_CALLS))
+		log_call("free");
 	free_internal(ptr);
 	pthread_mutex_unlock(&g_mutex);
 }

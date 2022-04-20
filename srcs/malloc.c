@@ -64,6 +64,7 @@ void	*large_malloc(const size_t size) {
 	if (block == MAP_FAILED) {
 		return (NULL);
 	}
+	log_heap_operation("Created", (void *)block);
 
 	block_init(block, total_size, 0);
 	block_push_back(&g_malloc_zones.large, block);
@@ -83,6 +84,8 @@ void	*malloc_internal(size_t size) {
 	} else {
 		result = large_malloc(size);
 	}
+	if (get_log_level(LOG_ALLOCS))
+		log_malloc(size);
 	return (result);
 }
 
@@ -90,6 +93,8 @@ void* malloc(size_t size) {
 	void	*result;
 
 	pthread_mutex_lock(&g_mutex);
+	if (get_log_level(LOG_CALLS))
+		log_call("malloc");
 	result = malloc_internal(size);
 	pthread_mutex_unlock(&g_mutex);
 	return (result);

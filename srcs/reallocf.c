@@ -9,6 +9,9 @@ void *reallocf(void *ptr, size_t size) {
 	void *res;
 
 	pthread_mutex_lock(&g_mutex);
+	if (get_log_level(LOG_CALLS))
+		log_call("reallocf");
+
 	res = realloc_internal(ptr, size);
 	if (res == NULL) {
 		free_internal(ptr);

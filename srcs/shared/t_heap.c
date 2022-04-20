@@ -15,6 +15,7 @@ t_heap *allocateHeap(size_t alloc_size) {
 	t_heap	*newHeap = mmap(NULL, real, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
 	if (newHeap == MAP_FAILED)
 		return (NULL);
+	log_heap_operation("Created", (void *)newHeap);
 	newHeap->total_size = real;
 	newHeap->block_count = 0;
 	newHeap->prev = NULL;

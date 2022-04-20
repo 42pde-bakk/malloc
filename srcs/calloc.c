@@ -9,6 +9,8 @@ void *calloc(size_t nmemb, size_t size) {
 	void	*ptr;
 
 	pthread_mutex_lock(&g_mutex);
+	if (get_log_level(LOG_CALLS))
+		log_call("calloc");
 	ptr = malloc_internal(nmemb * size);
 	if (ptr)
 		ft_memset(ptr, 0, nmemb * size);
