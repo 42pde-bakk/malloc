@@ -6,8 +6,8 @@
 #include "libc.h"
 
 static void	error_realloc(void *ptr) {
-	ft_putstr_fd("malloc *** error for object ", STDERR_FILENO);
-	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO);
+	ft_putstr_fd("malloc *** error for object 0x", STDERR_FILENO);
+	ft_putnbr_base_fd((unsigned long long int) ptr, 16, STDERR_FILENO, false);
 	ft_putstr_fd(": pointer being realloc'd was not allocated\n", STDERR_FILENO);
 }
 
@@ -98,6 +98,9 @@ void	*realloc(void *ptr, size_t size) {
 	void *res;
 
 	pthread_mutex_lock(&g_mutex);
+	if (get_log_level(LOG_CALLS))
+		log_call("realloc");
+
 	res = realloc_internal(ptr, size);
 	pthread_mutex_unlock(&g_mutex);
 	return (res);

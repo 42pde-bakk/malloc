@@ -36,6 +36,12 @@ typedef struct s_malloc_zones {
 	t_block	*large;
 } t_malloc_zones;
 
+typedef enum e_loglevel {
+	LOG_ALLOCS = 1 << 0,
+	LOG_CALLS = 1 << 1
+}	t_loglevel;
+
+
 extern t_malloc_zones	g_malloc_zones;
 extern pthread_mutex_t	g_mutex;
 
@@ -53,14 +59,13 @@ extern pthread_mutex_t	g_mutex;
 #  define DEBUG_FAULTY_POINTERS 0
 # endif
 
-# ifndef BONUS
-#  define BONUS 0
+# ifndef DEFRAGMENT
+#  define DEFRAGMENT 0
 # endif
 
 int		free_internal(void *ptr);
 void	*malloc_internal(size_t size);
 void	*realloc_internal(void *ptr, size_t size);
-
 
 void	*free_block(t_heap* heap, t_block* block);
 
@@ -95,5 +100,12 @@ bool	isSmall(size_t size);
 bool	isLarge(size_t size);
 bool	isSameCategory(size_t a, size_t b);
 rlim_t	get_rlimit_data();
+
+// logging/
+unsigned int get_log_level(t_loglevel lvl);
+void	log_malloc(size_t size);
+void	log_free(size_t size);
+void	log_call(const char *str);
+void	log_heap_operation(const char *operation, void *ptr);
 
 #endif //MALLOC_MALLOC_INTERNAL_H

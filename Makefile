@@ -33,8 +33,8 @@ endif
 ifdef LEAKS
  CFLAGS += -g3 -fsanitize=address
 endif
-ifdef BONUS
- CFLAGS += -D BONUS=1
+ifdef DEFRAGMENT
+ CFLAGS += -D DEFRAGMENT=1
 endif
 ifdef DEBUG_FAULTY_POINTERS
  CFLAGS += -D DEBUG_FAULTY_POINTERS=1

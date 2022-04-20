@@ -9,11 +9,11 @@ void	print_block_content(void *ptr_start, void *ptr_end, size_t amount_bytes) {
 	const int fd = STDOUT_FILENO;
 
 	ft_putstr_fd("0x", fd);
-	ft_putnbr_base_fd((unsigned long long)ptr_start, 16, fd);
+	ft_putnbr_base_fd((unsigned long long)ptr_start, 16, fd, true);
 	ft_putstr_fd(" - 0x", fd);
-	ft_putnbr_base_fd((unsigned long long)ptr_end, 16, fd);
+	ft_putnbr_base_fd((unsigned long long)ptr_end, 16, fd, true);
 	ft_putstr_fd(" : ", fd);
-	ft_putnbr_base_fd((unsigned long long)amount_bytes, 10, fd);
+	ft_putnbr_base_fd((unsigned long long)amount_bytes, 10, fd, true);
 	ft_putstr_fd(" bytes\n", fd);
 }
 
@@ -35,7 +35,7 @@ static void	print_zone_header(const char* str, void *zone_addr) {
 	ft_putstr_fd(" : ", fd);
 	if (zone_addr) {
 		ft_putstr_fd("0x", fd);
-		ft_putnbr_base_fd((unsigned long long) zone_addr, 16, fd);
+		ft_putnbr_base_fd((unsigned long long) zone_addr, 16, fd, true);
 	}
 	ft_putstr_fd("\n", fd);
 }
@@ -57,7 +57,7 @@ static size_t	show_large_zone(const t_block *block, const char *str) {
 static void	print_total_bytes(const size_t total) {
 	const int fd = STDOUT_FILENO;
 	ft_putstr_fd("Total : ", fd);
-	ft_putnbr_base_fd(total, 10, fd);
+	ft_putnbr_base_fd(total, 10, fd, true);
 	ft_putstr_fd(" bytes\n", fd);
 }
 
